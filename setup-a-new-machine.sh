@@ -11,7 +11,7 @@ mkdir -p ~/migration/home
 cd ~/migration
 
 # what is worth reinstalling?
-npm list -g --depth=0 	> npm-g-list.txt
+# npm list -g --depth=0 	> npm-g-list.txt
 
 
 # then compare brew-list to what's in `brew.sh`
@@ -50,7 +50,7 @@ bash < <( curl https://raw.github.com/jamiew/git-friendly/master/install.sh)
 # Type `git open` to open the GitHub page or website for a repository.
 npm install -g git-open
 # trash as the safe `rm` alternative
-npm install --global trash-cli
+# npm install --global trash-cli
 
 
 # github.com/rupa/z   - oh how i love you

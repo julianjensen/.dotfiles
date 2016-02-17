@@ -1,26 +1,71 @@
+# Useful `.gitignore` templates:
+# https://github.com/github/gitignore
 
-# working files
-.vim/viminfo
-.vim/swaps/*
-.vim/undo
+# ----------------------------------------------------------------------
+# | Linux                                                              |
+# ----------------------------------------------------------------------
+
+*~
+
+
+# ----------------------------------------------------------------------
+# | Miscellaneous                                                      |
+# ----------------------------------------------------------------------
+
+# Dependency directory
+# https://docs.npmjs.com/misc/faq#should-i-check-my-node-modules-folder-into-git
+
+node_modules
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# npm log file
+# https://docs.npmjs.com/misc/config#loglevel
+
+npm-debug.log
+
+
+# ----------------------------------------------------------------------
+# | OS X                                                               |
+# ----------------------------------------------------------------------
+
+._*
+.AppleDouble
+.DS_Store
+.localized
+.LSOverride
+.Spotlight-V100
+.Trashes
+Icon
+Desktop.ini
+
+
+# ----------------------------------------------------------------------
+# | Vim                                                                |
+# ----------------------------------------------------------------------
+
+%*
+*.sw[a-z]
+*.un~
+.netrwhist
+Session.vim
+
+
+# ----------------------------------------------------------------------
+# | Windows                                                            |
+# ----------------------------------------------------------------------
+
+Desktop.ini
+ehthumbs.db
+Thumbs.db
+
+# ----------------------------------------------------------------------
+# | Added by ME!                                                       |
+# ----------------------------------------------------------------------
 
 # git credential file
 .gitconfig.local
-
-
-
-
-# Folder view configuration files
-.DS_Store
-Desktop.ini
-
-# Thumbnail cache files
 ._*
-Thumbs.db
-
-# Files that might appear on external disks
-.Spotlight-V100
-.Trashes
 
 # Compiled Python files
 *.pyc
