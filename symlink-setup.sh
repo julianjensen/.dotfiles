@@ -20,6 +20,7 @@
 # utils !!!
 #
 
+#!/bin/bash
 
 answer_is_yes() {
     [[ "$REPLY" =~ ^[Yy]$ ]] \
@@ -41,7 +42,7 @@ ask_for_confirmation() {
 ask_for_sudo() {
 
     # Ask for the administrator password upfront
-    sudo -v
+    sudo -v &> /dev/null
 
     # Update existing `sudo` time stamp until this script has finished
     # https://gist.github.com/cowboy/3118588
@@ -54,13 +55,12 @@ ask_for_sudo() {
 }
 
 cmd_exists() {
-    [ -x "$(command -v "$1")" ] \
-        && printf 0 \
-        || printf 1
+    command -v "$1" &> /dev/null
+    return $?
 }
 
 execute() {
-    $1 &> /dev/null
+    eval "$1" &> /dev/null
     print_result $? "${2:-$1}"
 }
 
@@ -71,22 +71,27 @@ get_answer() {
 get_os() {
 
     declare -r OS_NAME="$(uname -s)"
-    local os=""
+    local os=''
 
     if [ "$OS_NAME" == "Darwin" ]; then
-        os="osx"
+        os='osx'
     elif [ "$OS_NAME" == "Linux" ] && [ -e "/etc/lsb-release" ]; then
-        os="ubuntu"
+        os='ubuntu'
+    else
+        os="$OS_NAME"
     fi
 
     printf "%s" "$os"
 
 }
 
+get_os_arch() {
+    printf "%s" "$(getconf LONG_BIT)"
+}
+
 is_git_repository() {
-    [ "$(git rev-parse &>/dev/null; printf $?)" -eq 0 ] \
-        && return 0 \
-        || return 1
+    git rev-parse &> /dev/null
+    return $?
 }
 
 mkd() {
@@ -104,18 +109,31 @@ mkd() {
 }
 
 print_error() {
-    # Print output in red
-    printf "\e[0;31m  [✖] $1 $2\e[0m\n"
+    print_in_red "  [✖] $1 $2\n"
+}
+
+print_in_green() {
+    printf "\e[0;32m$1\e[0m"
+}
+
+print_in_purple() {
+    printf "\e[0;35m$1\e[0m"
+}
+
+print_in_red() {
+    printf "\e[0;31m$1\e[0m"
+}
+
+print_in_yellow() {
+    printf "\e[0;33m$1\e[0m"
 }
 
 print_info() {
-    # Print output in purple
-    printf "\n\e[0;35m $1\e[0m\n\n"
+    print_in_purple "\n $1\n\n"
 }
 
 print_question() {
-    # Print output in yellow
-    printf "\e[0;33m  [?] $1\e[0m"
+    print_in_yellow "  [?] $1"
 }
 
 print_result() {
@@ -123,19 +141,12 @@ print_result() {
         && print_success "$2" \
         || print_error "$2"
 
-    [ "$3" == "true" ] && [ $1 -ne 0 ] \
-        && exit
+    return $1
 }
 
 print_success() {
-    # Print output in green
-    printf "\e[0;32m  [✔] $1\e[0m\n"
+    print_in_green "  [✔] $1\n"
 }
-
-
-
-
-
 
 #
 # actual symlink stuff

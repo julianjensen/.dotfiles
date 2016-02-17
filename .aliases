@@ -1,40 +1,69 @@
-# Easier navigation: .., ..., ~ and -
-alias ..="cd .."
-alias cd..="cd .."
-alias ...="cd ../.."
-alias ....="cd ../../.."
-alias .....="cd ../../../.."
-alias ~="cd ~" # `cd` is probably faster to type though
-alias -- -="cd -"
+alias today='date +"%A, %B %-d, %Y"'
+alias now='date +"%T"'
+alias cd..='cd ..'
+alias ..='cd ..'
+alias ...='cd ../../'
+alias ....='cd ../../../'
+alias .....='cd ../../../../'
+alias t='clear;tail -50'
+alias c='clear'
 
-# mv, rm, cp
-alias mv='mv -v'
-alias rm='rm -i -v'
-alias cp='cp -v'
+alias meminfo='free -m -l -t'
 
-alias cask='brew cask' # i <3 u cask
-alias where=which # sometimes i forget
-alias brwe=brew  #typos
+## get top process eating memory
+alias psmem='ps auxf | sort -nr -k 4'
+alias psmem10='clear;ps auxf | sort -nr -k 4 | head -10'
 
-alias hosts='sudo $EDITOR /etc/hosts'   # yes I occasionally 127.0.0.1 twitter.com ;)
+## get top process eating cpu ##
+alias pscpu='ps auxf | sort -nr -k 3'
+alias pscpu10='clear;ps auxf | sort -nr -k 3 | head -10'
 
+## Get server cpu info ##
+alias cpuinfo='lscpu'
+
+## get GPU ram on desktop / laptop##
+alias gpumem='grep -i --color memory /var/log/Xorg.0.log'
+
+## set some other defaults ##
+alias df='df -H'
+alias du='du -ch'
+
+# ROT13-encode text. Works for decoding, too! ;)
+alias rot13='tr a-zA-Z n-za-mN-ZA-M'
+
+# top is atop, just like vi is vim
+alias top='atop'
+
+## Memcached server status  ##
+alias mcdstats='/usr/local/bin/memcached-tool 127.0.0.1:11211 stats'
+alias mcdshow='/usr/local/bin/memcached-tool 127.0.0.1:11211 display'
+
+## quickly flush out memcached server ##
+alias flushmcd='echo "flush_all" | nc 127.0.0.1 11211'
+
+## redis flush
+alias reflush='redis-cli flushall'
+
+alias ps2='ps -ef | grep -v $$ | grep -i '
+alias psg='ps -Helf | grep -v $$ | grep -i -e WCHAN -e '
+
+# Sort by most recently modified
+alias lt='ls -Falrt --human-readable'
+
+alias filetree="find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'"
 
 ###
 # time to upgrade `ls`
 
-# use coreutils `ls` if possible…
-hash gls >/dev/null 2>&1 || alias gls="ls"
-
 # always use color, even when piping (to awk,grep,etc)
-if gls --color > /dev/null 2>&1; then colorflag="--color"; else colorflag="-G"; fi;
+if ls --color > /dev/null 2>&1; then colorflag="--color"; else colorflag="-G"; fi;
 export CLICOLOR_FORCE=1
 
 # ls options: A = include hidden (but not . or ..), F = put `/` after folders, h = byte unit suffixes
-alias ls='gls -AFh ${colorflag} --group-directories-first'
+alias la='ls -lAFh ${colorflag} --group-directories-first'
+alias ll='ls -lFh ${colorflag} --group-directories-first'
 alias lsd='ls -l | grep "^d"' # only directories
-#    `la` defined in .functions
 ###
-
 
 # `cat` with beautiful colors. requires: sudo easy_install -U Pygments
 alias c='pygmentize -O style=monokai -f console256 -g'
@@ -56,26 +85,43 @@ alias dig="dig +nocmd any +multiline +noall +answer"
 # Recursively delete `.DS_Store` files
 alias cleanup_dsstore="find . -name '*.DS_Store' -type f -ls -delete"
 
-alias diskspace_report="df -P -kHl"
-alias free_diskspace_report="diskspace_report"
-
 # Shortcuts
 alias g="git"
-alias v="vim"
 alias ungz="gunzip -k"
 
 # File size
 alias fs="stat -f \"%z bytes\""
 
-# Empty the Trash on all mounted volumes and the main HDD. then clear the useless sleepimage
-alias emptytrash="sudo rm -rfv /Volumes/*/.Trashes; rm -rfv ~/.Trash; sudo rm /private/var/vm/sleepimage"
-
-# Update installed Ruby gems, Homebrew, npm, and their installed packages
-alias brew_update="brew -v update; brew -v upgrade --all; brew cleanup; brew cask cleanup; brew prune; brew doctor"
-alias update_brew_npm_gem='brew_update; npm install npm -g; npm update -g; sudo gem update --system; sudo gem update --no-rdoc --no-ri'
-
-
 # One of @janmoesen’s ProTip™s
 for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
 	alias "$method"="lwp-request -m '$method'"
 done
+
+alias lls="ls -Fla $1 $2 $3 $4 $5  | awk '{ print; x=x+\$5 } END { print \"total bytes = \",x }'"
+
+alias machine="echo you are logged in to `uname -a | cut -f2 -d' '`"
+alias connections='sudo lsof -n -P -i +c 15'
+
+alias rl='. ~/.bash_aliases'
+
+alias bigfiles="find . -type f 2>/dev/null | xargs du -a 2>/dev/null | awk '{ if ( \$1 > 5000) print \$0 }'"
+alias verybigfiles="find . -type f 2>/dev/null | xargs du -a 2>/dev/null | awk '{ if ( \$1 > 500000) print \$0 }'"
+
+alias back='cd $OLDPWD'
+
+# View HTTP traffic
+alias sniff="sudo ngrep -d 'en1' -t '^(GET|POST) ' 'tcp and port 80'"
+alias httpdump="sudo tcpdump -i en1 -n -s 0 -w - | grep -a -o -E \"Host\: .*|GET \/.*\""
+
+# Canonical hex dump; some systems have this symlinked
+type -t hd > /dev/null || alias hd="hexdump -C"
+
+
+# Kill all the tabs in Chrome to free up memory
+# [C] explained: http://www.commandlinefu.com/commands/view/402/exclude-grep-from-your-grepped-output-of-ps-alias-included-in-description
+alias chromekill="ps ux | grep '[C]hrome Helper --type=renderer' | grep -v extension-process | tr -s ' ' | cut -d ' ' -f2 | xargs kill"
+
+alias ts="date +%s"
+
+alias ns="netstat -vWeepl --tcp"
+alias nsn="netstat -vWneepl --tcp"
