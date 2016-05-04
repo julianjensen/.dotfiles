@@ -126,7 +126,7 @@ hf() {
 function txt() { grep -rHn --exclude=*.map --exclude=*.min.* $@ *; }
 function itxt() { grep -rHin --exclude=*.map --exclude=*.min.* $@ *; }
 
-function json() { cat “$@” | /usr/bin/python -m json.tool ;}
+#function json() { cat “$@” | /usr/bin/python -m json.tool ;}
 
 # List directories by size, largest on top
 function dus () {
