@@ -1,0 +1,4 @@
+#!/bin/sh
+
+/usr/local/bin/node --harmony_rest_parameters --harmony_destructuring --harmony_default_parameters $*
+
