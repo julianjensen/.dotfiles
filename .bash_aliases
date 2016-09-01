@@ -63,6 +63,7 @@ export CLICOLOR_FORCE=1
 alias la='ls -lAFh ${colorflag} --group-directories-first'
 alias ll='ls -lFh ${colorflag} --group-directories-first'
 alias lsd='ls -l | grep "^d"' # only directories
+alias gls='git br -l'
 ###
 
 # `cat` with beautiful colors. requires: sudo easy_install -U Pygments
@@ -126,4 +127,7 @@ alias ts="date +%s"
 alias ns="netstat -vWeepl --tcp"
 alias nsn="netstat -vWneepl --tcp"
 alias ducks='du -cks * | sort -rn | head'
+
+alias jdev="ssh julian@julian.dev.corp.pvt"
+
 

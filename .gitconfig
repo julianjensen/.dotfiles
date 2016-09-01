@@ -10,6 +10,7 @@
 	c = commit -am
 	up = pull
 	p = push
+	podev = push origin development
 	s = status -s
 	df = diff --color --color-words --abbrev
 	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --
