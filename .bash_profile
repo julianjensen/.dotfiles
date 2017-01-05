@@ -87,3 +87,6 @@ shopt -s nocaseglob;
 shopt -s cdspell;
 
 export NODE_PATH=$NODE_PATH:/usr/local/lib/node_modules
+
+ssh-add $HOME/.ssh/bastion-key.pem $HOME/.ssh/mongo-server-key.pem $HOME/.ssh/portals-key.pem $HOME/.ssh/rest-server-key.pem
+

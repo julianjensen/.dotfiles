@@ -8,6 +8,8 @@ alias .....='cd ../../../../'
 alias t='clear;tail -50'
 alias c='clear'
 
+alias grep=egrep
+
 alias meminfo='free -m -l -t'
 
 ## get top process eating memory
@@ -130,4 +132,5 @@ alias ducks='du -cks * | sort -rn | head'
 
 alias jdev="ssh julian@julian.dev.corp.pvt"
 
+alias bastion='ssh -A ubuntu@ec2-52-91-213-165.compute-1.amazonaws.com'
 
