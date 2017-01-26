@@ -22,7 +22,18 @@ alias firewall=iptlist
 
 export NIC=$(ls -1 /sys/class/net/ | grep -v lo)
 alias xclip='xclip -selection c'
-alias grep=egrep
+
+alias inst='sudo apt-get'
+alias update='sudo apt-get update && sudo apt-get upgrade'
+alias search='apt-cache search'
+
+alias dnstop='dnstop -l 5 '${NIC}
+alias vnstat='vnstat -i '${NIC}
+alias iftop='iftop -i '${NIC}
+alias tcpdump='tcpdump -i '${NIC}
+alias ethtool='ethtool '${NIC}
+
+alias grep='egrep --color=auto'
 
 alias rm='rm --preserve-root'
 alias chown='chown --preserve-root'
