@@ -8,6 +8,8 @@ alias .....='cd ../../../../'
 alias t='clear;tail -50'
 alias c='clear'
 
+alias xclip='xclip -selection c'
+
 alias grep=egrep
 
 alias meminfo='free -m -l -t'
