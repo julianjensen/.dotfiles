@@ -28,6 +28,7 @@ alias tcpdump='sudo tcpdump -i '${NIC}
 alias dnstop='sudo dnstop -l 5 '${NIC}
 alias ethtool='ethtool '${NIC}
 
+alias search='apt-cache search'
 alias inst='sudo apt-get install'
 alias update='sudo apt-get update && sudo apt-get upgrade'
 alias apt-get='sudo apt-get'
