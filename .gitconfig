@@ -188,3 +188,6 @@
 	trustExitCode = false
 [mergetool]
 	keepBackup = false
+[user]
+	email = jjdanois@gmail.com
+	name = Julian Jensen

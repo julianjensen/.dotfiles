@@ -8,9 +8,26 @@ alias .....='cd ../../../../'
 alias t='clear;tail -50'
 alias c='clear'
 
-alias xclip='xclip -selection c'
+alias ping='ping -c 10 -s.2'
+alias .3='cd ../../../'
+alias .4='cd ../../../../'
+alias .5='cd ../../../../../'
 
+alias ipt='sudo /sbin/iptables'
+alias iptlist='sudo /sbin/iptables -L -n -v --line-numbers'
+alias iptlistin='sudo /sbin/iptables -L INPUT -n -v --line-numbers'
+alias iptlistout='sudo /sbin/iptables -L OUTPUT -n -v --line-numbers'
+alias iptlistfw='sudo /sbin/iptables -L FORWARD -n -v --line-numbers'
+alias firewall=iptlist
+
+export NIC=$(ls -1 /sys/class/net/ | grep -v lo)
+alias xclip='xclip -selection c'
 alias grep=egrep
+
+alias rm='rm --preserve-root'
+alias chown='chown --preserve-root'
+alias chmod='chmod --preserve-root'
+alias chgrp='chgrp --preserve-root'
 
 alias meminfo='free -m -l -t'
 
@@ -84,7 +101,7 @@ alias gr='[ ! -z `git rev-parse --show-cdup` ] && cd `git rev-parse --show-cdup 
 
 
 # Networking. IP address, dig, DNS
-alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
+alias ext-ip="dig +short myip.opendns.com @resolver1.opendns.com"
 alias dig="dig +nocmd any +multiline +noall +answer"
 
 # Recursively delete `.DS_Store` files
