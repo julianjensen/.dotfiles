@@ -23,7 +23,7 @@ alias firewall=iptlist
 export NIC=$(ls -1 /sys/class/net/ | grep -v lo)
 alias xclip='xclip -selection c'
 
-alias inst='sudo apt-get'
+alias inst='sudo apt-get install'
 alias update='sudo apt-get update && sudo apt-get upgrade'
 alias search='apt-cache search'
 
