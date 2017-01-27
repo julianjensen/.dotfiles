@@ -20,18 +20,19 @@ alias iptlistout='sudo /sbin/iptables -L OUTPUT -n -v --line-numbers'
 alias iptlistfw='sudo /sbin/iptables -L FORWARD -n -v --line-numbers'
 alias firewall=iptlist
 
-export NIC=$(ls -1 /sys/class/net/ | grep -v lo)
+export NIC=$(ls -1 /sys/class/net/ | grep -v lo | head -n 1)
 alias xclip='xclip -selection c'
+alias ack='ack -k --ignore-dir=node_modules'
 
 alias inst='sudo apt-get install'
-alias update='sudo apt-get update && sudo apt-get upgrade'
+alias update='sudo apt-get update && sudo apt-get upgrade && sudo apt autoremove'
 alias search='apt-cache search'
 
-alias dnstop='dnstop -l 5 '${NIC}
-alias vnstat='vnstat -i '${NIC}
-alias iftop='iftop -i '${NIC}
-alias tcpdump='tcpdump -i '${NIC}
-alias ethtool='ethtool '${NIC}
+alias dnstop='sudo dnstop -l 5 '${NIC}
+alias vnstat='sudo vnstat -i '${NIC}
+alias iftop='sudo iftop -i '${NIC}
+alias tcpdump='sudo tcpdump -i '${NIC}
+alias ethtool='sudo ethtool '${NIC}
 
 alias grep='egrep --color=auto'
 
