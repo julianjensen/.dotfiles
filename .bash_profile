@@ -87,3 +87,12 @@ shopt -s nocaseglob;
 shopt -s cdspell;
 
 export NODE_PATH=$NODE_PATH:/usr/local/lib/node_modules
+export EDITOR=vim
+ssh-add $HOME/.ssh/bastion-key.pem $HOME/.ssh/mongo-server-key.pem $HOME/.ssh/portals-key.pem $HOME/.ssh/rest-server-key.pem >/dev/null 2>&1
+if hash tmuxifier 2>/dev/null; then
+	export PATH="$HOME/.tmuxifier/bin:$PATH"
+	eval "$(tmuxifier init -)"
+fi
+if hash tmuxinator 2>/dev/null; then source /var/lib/gems/2.3.0/gems/tmuxinator-0.9.0/completion/tmuxinator.bash; fi
+
+

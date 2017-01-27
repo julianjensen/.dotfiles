@@ -8,7 +8,41 @@ alias .....='cd ../../../../'
 alias t='clear;tail -50'
 alias c='clear'
 
-alias xclip="xclip -selection c"
+alias ping='ping -c 10 -s.2'
+alias .3='cd ../../../'
+alias .4='cd ../../../../'
+alias .5='cd ../../../../../'
+
+alias ipt='sudo /sbin/iptables'
+alias iptlist='sudo /sbin/iptables -L -n -v --line-numbers'
+alias iptlistin='sudo /sbin/iptables -L INPUT -n -v --line-numbers'
+alias iptlistout='sudo /sbin/iptables -L OUTPUT -n -v --line-numbers'
+alias iptlistfw='sudo /sbin/iptables -L FORWARD -n -v --line-numbers'
+alias firewall=iptlist
+
+# nmcli -t -f DEVICE connection show --active
+# ip route show | egrep '^default' | cut -d' ' -f 5
+
+export NIC=$(nmcli -t -f DEVICE con show -a)
+alias xclip='xclip -selection c'
+alias ack='ack -k --ignore-dir=node_modules'
+
+alias inst='sudo apt-get install'
+alias update='sudo apt-get update && sudo apt-get upgrade && sudo apt autoremove'
+alias search='apt-cache search'
+
+alias dnstop='sudo dnstop -l 5 '${NIC}
+alias vnstat='sudo vnstat -i '${NIC}
+alias iftop='sudo iftop -i '${NIC}
+alias tcpdump='sudo tcpdump -i '${NIC}
+alias ethtool='sudo ethtool '${NIC}
+
+alias grep='egrep --color=auto'
+
+alias rm='rm --preserve-root'
+alias chown='chown --preserve-root'
+alias chmod='chmod --preserve-root'
+alias chgrp='chgrp --preserve-root'
 
 alias meminfo='free -m -l -t'
 
@@ -132,4 +166,5 @@ alias ducks='du -cks * | sort -rn | head'
 
 alias jdev="ssh julian@julian.dev.corp.pvt"
 
+alias bastion='ssh -A ubuntu@ec2-52-91-213-165.compute-1.amazonaws.com'
 

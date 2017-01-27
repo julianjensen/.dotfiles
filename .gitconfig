@@ -155,7 +155,7 @@
 
 # git mergetool
 [merge]
-	tool = merger
+	tool = p4mergetool
 
 # rewrites of repo paths
 [url "git@github.com:"]
@@ -183,6 +183,11 @@
 
 [mergetool "p4merge"]
 	cmd = p4merge
+[mergetool "p4mergetool"]
+	cmd = /usr/bin/p4merge $PWD/$BASE $PWD/$REMOTE $PWD/$LOCAL $PWD/$MERGED
+	trustExitCode = false
+[mergetool]
+	keepBackup = false
 [user]
-	name = Julian Jensen
 	email = jjdanois@gmail.com
+	name = Julian Jensen
