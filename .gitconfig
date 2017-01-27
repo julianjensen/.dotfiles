@@ -183,3 +183,6 @@
 
 [mergetool "p4merge"]
 	cmd = p4merge
+[user]
+	name = Julian Jensen
+	email = jjdanois@gmail.com

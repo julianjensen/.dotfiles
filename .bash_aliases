@@ -8,6 +8,8 @@ alias .....='cd ../../../../'
 alias t='clear;tail -50'
 alias c='clear'
 
+alias xclip="xclip -selection c"
+
 alias meminfo='free -m -l -t'
 
 ## get top process eating memory
@@ -80,7 +82,7 @@ alias gr='[ ! -z `git rev-parse --show-cdup` ] && cd `git rev-parse --show-cdup 
 
 
 # Networking. IP address, dig, DNS
-alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
+alias ext-ip="dig +short myip.opendns.com @resolver1.opendns.com"
 alias dig="dig +nocmd any +multiline +noall +answer"
 
 # Recursively delete `.DS_Store` files
