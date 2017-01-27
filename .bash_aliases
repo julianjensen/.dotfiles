@@ -23,7 +23,6 @@ alias firewall=iptlist
 # nmcli -t -f DEVICE connection show --active
 # ip route show | egrep '^default' | cut -d' ' -f 5
 
-export NIC=$(nmcli -t -f DEVICE con show -a)
 alias xclip='xclip -selection c'
 alias ack='ack -k --ignore-dir=node_modules'
 
@@ -31,11 +30,14 @@ alias inst='sudo apt-get install'
 alias update='sudo apt-get update && sudo apt-get upgrade && sudo apt autoremove'
 alias search='apt-cache search'
 
-alias dnstop='sudo dnstop -l 5 '${NIC}
-alias vnstat='sudo vnstat -i '${NIC}
-alias iftop='sudo iftop -i '${NIC}
-alias tcpdump='sudo tcpdump -i '${NIC}
-alias ethtool='sudo ethtool '${NIC}
+if hash nmcli 2>/dev/null; then
+	export NIC=$(nmcli -t -f DEVICE con show -a)
+	alias dnstop='sudo dnstop -l 5 '${NIC}
+	alias vnstat='sudo vnstat -i '${NIC}
+	alias iftop='sudo iftop -i '${NIC}
+	alias tcpdump='sudo tcpdump -i '${NIC}
+	alias ethtool='sudo ethtool '${NIC}
+fi
 
 alias grep='egrep --color=auto'
 
