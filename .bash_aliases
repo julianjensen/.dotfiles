@@ -31,7 +31,7 @@ alias update='sudo apt-get update && sudo apt-get upgrade && sudo apt autoremove
 alias search='apt-cache search'
 
 if hash nmcli 2>/dev/null; then
-	export NIC=$(nmcli -t -f DEVICE con show -a)
+	export NIC=$(nmcli -t -f DEVICE c s -a)
 	alias dnstop='sudo dnstop -l 5 '${NIC}
 	alias vnstat='sudo vnstat -i '${NIC}
 	alias iftop='sudo iftop -i '${NIC}
