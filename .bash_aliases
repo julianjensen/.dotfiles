@@ -20,7 +20,10 @@ alias iptlistout='sudo /sbin/iptables -L OUTPUT -n -v --line-numbers'
 alias iptlistfw='sudo /sbin/iptables -L FORWARD -n -v --line-numbers'
 alias firewall=iptlist
 
-export NIC=$(ls -1 /sys/class/net/ | grep -v lo | head -n 1)
+# nmcli -t -f DEVICE connection show --active
+# ip route show | egrep '^default' | cut -d' ' -f 5
+
+export NIC=$(nmcli -t -f DEVICE con show -a)
 alias xclip='xclip -selection c'
 alias ack='ack -k --ignore-dir=node_modules'
 
