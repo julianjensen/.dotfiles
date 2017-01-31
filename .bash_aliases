@@ -13,6 +13,9 @@ alias .3='cd ../../../'
 alias .4='cd ../../../../'
 alias .5='cd ../../../../../'
 
+alias release='git checkout release'
+alias dev='git checkout development'
+
 alias ipt='sudo /sbin/iptables'
 alias iptlist='sudo /sbin/iptables -L -n -v --line-numbers'
 alias iptlistin='sudo /sbin/iptables -L INPUT -n -v --line-numbers'
@@ -27,7 +30,8 @@ alias xclip='xclip -selection c'
 alias ack='ack -k --ignore-dir=node_modules'
 
 alias inst='sudo apt-get install'
-alias update='sudo apt-get update && sudo apt-get upgrade && sudo apt autoremove'
+alias update='sudo apt-get update'
+alias upgrade='sudo apt-get update && sudo apt-get upgrade && sudo apt autoremove'
 alias search='apt-cache search'
 
 if hash nmcli 2>/dev/null; then
