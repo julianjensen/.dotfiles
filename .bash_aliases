@@ -27,7 +27,8 @@ alias xclip='xclip -selection c'
 alias ack='ack -k --ignore-dir=node_modules'
 
 alias inst='sudo apt-get install'
-alias update='sudo apt-get update && sudo apt-get upgrade && sudo apt autoremove'
+alias update='sudo apt-get update'
+alias upgrade='sudo apt-get update && sudo apt-get upgrade && sudo apt autoremove'
 alias search='apt-cache search'
 
 if hash nmcli 2>/dev/null; then
@@ -169,4 +170,5 @@ alias ducks='du -cks * | sort -rn | head'
 alias jdev="ssh julian@julian.dev.corp.pvt"
 
 alias bastion='ssh -A ubuntu@ec2-52-91-213-165.compute-1.amazonaws.com'
+alias wakework='wakeonlan 80:fa:5b:19:84:0c'
 
