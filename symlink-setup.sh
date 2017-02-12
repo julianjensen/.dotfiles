@@ -166,6 +166,11 @@ main() {
     local sourceFile=""
     local targetFile=""
 
+    bash < <( curl https://raw.github.com/jamiew/git-friendly/master/install.sh)
+    mkdir ~/code >/dev/null 2>&1
+    git clone https://github.com/rupa/z.git ~/code/z
+    chmod +x ~/code/z/z.sh
+
     for i in ${FILES_TO_SYMLINK[@]}; do
 
         sourceFile="$(pwd)/$i"

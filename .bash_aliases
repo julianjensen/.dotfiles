@@ -20,6 +20,10 @@ alias iptlistout='sudo /sbin/iptables -L OUTPUT -n -v --line-numbers'
 alias iptlistfw='sudo /sbin/iptables -L FORWARD -n -v --line-numbers'
 alias firewall=iptlist
 
+# ps -ejH
+# ps axjf
+# pstree
+
 # nmcli -t -f DEVICE connection show --active
 # ip route show | egrep '^default' | cut -d' ' -f 5
 
@@ -27,7 +31,8 @@ alias xclip='xclip -selection c'
 alias ack='ack -k --ignore-dir=node_modules'
 
 alias inst='sudo apt-get install'
-alias update='sudo apt-get update && sudo apt-get upgrade && sudo apt autoremove'
+alias update='sudo apt-get update'
+alias upgrade='sudo apt-get update && sudo apt-get upgrade && sudo apt autoremove'
 alias search='apt-cache search'
 
 if hash nmcli 2>/dev/null; then
