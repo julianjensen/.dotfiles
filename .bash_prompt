@@ -1,9 +1,26 @@
 # This prompt inspired by gf3, sindresorhus, alrra, and mathiasbynens.
 # but customized to me. <3
 
+TMPMV=
+
+function pvers()
+{
+    if [ -f "./package.json" ]; then
+        TMPMV=$(sed -nr 's/^\s*"version": "([^"]+)".*$/\1/p' ./package.json)
+    elif [ -f "../package.json" ]; then
+        TMPMV=$(sed -nr 's/^\s*"version": "([^"]+)".*$/\1/p' ../package.json)
+    elif [ -f "../../package.json" ]; then
+        TMPMV=$(sed -nr 's/^\s*"version": "([^"]+)".*$/\1/p' ../../package.json)
+    fi
+}
+
 parse_git_branch() {
 	local s='';
-	
+
+#  unset MODULE_VERSION
+
+#    pvers
+
   ref=$(git symbolic-ref -q HEAD 2> /dev/null) || return
 
 	# Ensure the index is up to date.
@@ -53,6 +70,7 @@ pimp_prompt() {
   local       WHITE="\[\033[0;37m\]"
   local  WHITE_BOLD="\[\033[1;37m\]"
   local  LIGHT_GRAY="\[\033[0;37m\]"
+
   case $TERM in
     xterm*)
     TITLEBAR='\[\033]0;\u@\h:\w\007\]'
@@ -68,3 +86,6 @@ PS2='> '
 PS4='+ '
 }
 pimp_prompt
+export MODULE_VERSION="$TMPMV"
+export TMPMV
+
