@@ -23,6 +23,10 @@ alias iptlistout='sudo /sbin/iptables -L OUTPUT -n -v --line-numbers'
 alias iptlistfw='sudo /sbin/iptables -L FORWARD -n -v --line-numbers'
 alias firewall=iptlist
 
+# ps -ejH
+# ps axjf
+# pstree
+
 # nmcli -t -f DEVICE connection show --active
 # ip route show | egrep '^default' | cut -d' ' -f 5
 

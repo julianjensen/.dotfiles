@@ -1,3 +1,11 @@
+
+# Install from a .deb package
+function debinst() {
+	packname=$(dpkg -I $1 | grep Package | awk '{print $2}')
+	sudo cp $1 /var/cache/apt/archives/
+	sudo apt install "$packname"
+}
+
 # Create a new directory and enter it
 function md() {
 	mkdir -p "$@" && cd "$@"
