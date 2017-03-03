@@ -88,7 +88,13 @@ shopt -s cdspell;
 
 export NODE_PATH=$NODE_PATH:/usr/local/lib/node_modules
 export EDITOR=vim
-ssh-add $HOME/.ssh/bastion-key.pem $HOME/.ssh/mongo-key.pem $HOME/.ssh/portals-key.pem $HOME/.ssh/rest-key.pem >/dev/null 2>&1
+
+pgrep ssh-agent || {
+	echo Adding SSH agent
+	eval "$(ssh-agent -s >/dev/null)"
+	ssh-add $HOME/.ssh/bastion-key.pem $HOME/.ssh/mongo-key.pem $HOME/.ssh/portals-key.pem $HOME/.ssh/rest-key.pem >/dev/null 2>&1
+}
+
 if hash tmuxifier 2>/dev/null; then
 	export PATH="$HOME/.tmuxifier/bin:$PATH"
 	eval "$(tmuxifier init -)"

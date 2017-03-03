@@ -13,12 +13,19 @@ alias .3='cd ../../../'
 alias .4='cd ../../../../'
 alias .5='cd ../../../../../'
 
+alias release='git checkout release'
+alias dev='git checkout development'
+
 alias ipt='sudo /sbin/iptables'
 alias iptlist='sudo /sbin/iptables -L -n -v --line-numbers'
 alias iptlistin='sudo /sbin/iptables -L INPUT -n -v --line-numbers'
 alias iptlistout='sudo /sbin/iptables -L OUTPUT -n -v --line-numbers'
 alias iptlistfw='sudo /sbin/iptables -L FORWARD -n -v --line-numbers'
 alias firewall=iptlist
+
+# ps -ejH
+# ps axjf
+# pstree
 
 # nmcli -t -f DEVICE connection show --active
 # ip route show | egrep '^default' | cut -d' ' -f 5
