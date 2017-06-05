@@ -1,0 +1,177 @@
+
+# Install from a .deb package
+function debinst() {
+	packname=$(dpkg -I $1 | grep Package | awk '{print $2}')
+	sudo cp $1 /var/cache/apt/archives/
+	sudo apt install "$packname"
+}
+
+# Create a new directory and enter it
+function md() {
+	mkdir -p "$@" && cd "$@"
+}
+
+# Push release with tag
+reltag()
+{
+    local VERSION=$(sed -nr 's/^\s*"version": "([^"]+)".*$/\1/p' package.json)
+
+    git tag -a v${VERSION}${1}
+    git push origin release
+    git push origin --tags
+}
+
+# find shorthand
+function f() {
+	find . -name "$1" 2>&1 | grep -v 'Permission denied'
+}
+
+# Start an HTTP server from a directory, optionally specifying the port
+function server() {
+	local port="${1:-8000}"
+	http-server -p ${port}
+}
+
+
+# Copy w/ progress
+cpp () {
+  rsync -WavP --human-readable --progress $1 $2
+}
+
+
+
+# get gzipped size
+function gz() {
+	echo "orig size    (bytes): "
+	cat "$1" | wc -c
+	echo "gzipped size (bytes): "
+	gzip -c "$1" | wc -c
+}
+
+# whois a domain or a URL
+#function whois() {
+#	local domain=$(echo "$1" | awk -F/ '{print $3}') # get domain from URL
+#	if [ -z $domain ] ; then
+#		domain=$1
+#	fi
+#	echo "Getting whois record for: $domain …"
+
+	# avoid recursion
+					# this is the best whois server
+													# strip extra fluff
+#	/usr/bin/whois -h whois.internic.net $domain | sed '/NOTICE:/q'
+#}
+
+function localip(){
+	function _localip(){ echo "📶  "$(ipconfig getifaddr "$1"); }
+	export -f _localip
+	local purple="\x1B\[35m" reset="\x1B\[m"
+	networksetup -listallhardwareports | \
+		sed -r "s/Hardware Port: (.*)/${purple}\1${reset}/g" | \
+		sed -r "s/Device: (en.*)$/_localip \1/e" | \
+		sed -r "s/Ethernet Address:/📘 /g" | \
+		sed -r "s/(VLAN Configurations)|==*//g"
+}
+
+# Extract archives - use: extract <file>
+# Based on http://dotfiles.org/~pseup/.bashrc
+function extract() {
+	if [ -f "$1" ] ; then
+		local filename=$(basename "$1")
+		local foldername="${filename%%.*}"
+		local fullpath=`perl -e 'use Cwd "abs_path";print abs_path(shift)' "$1"`
+		local didfolderexist=false
+		if [ -d "$foldername" ]; then
+			didfolderexist=true
+			read -p "$foldername already exists, do you want to overwrite it? (y/n) " -n 1
+			echo
+			if [[ $REPLY =~ ^[Nn]$ ]]; then
+				return
+			fi
+		fi
+		mkdir -p "$foldername" && cd "$foldername"
+		case $1 in
+			*.tar.bz2) tar xjf "$fullpath" ;;
+			*.tar.gz) tar xzf "$fullpath" ;;
+			*.tar.xz) tar Jxvf "$fullpath" ;;
+			*.tar.Z) tar xzf "$fullpath" ;;
+			*.tar) tar xf "$fullpath" ;;
+			*.taz) tar xzf "$fullpath" ;;
+			*.tb2) tar xjf "$fullpath" ;;
+			*.tbz) tar xjf "$fullpath" ;;
+			*.tbz2) tar xjf "$fullpath" ;;
+			*.tgz) tar xzf "$fullpath" ;;
+			*.txz) tar Jxvf "$fullpath" ;;
+			*.zip) unzip "$fullpath" ;;
+			*) echo "'$1' cannot be extracted via extract()" && cd .. && ! $didfolderexist && rm -r "$foldername" ;;
+		esac
+	else
+		echo "'$1' is not a valid file"
+	fi
+}
+
+# animated gifs from any video
+# from alex sexton   gist.github.com/SlexAxton/4989674
+gifify() {
+  if [[ -n "$1" ]]; then
+	if [[ $2 == '--good' ]]; then
+	  ffmpeg -i $1 -r 10 -vcodec png out-static-%05d.png
+	  time convert -verbose +dither -layers Optimize -resize 900x900\> out-static*.png  GIF:- | gifsicle --colors 128 --delay=5 --loop --optimize=3 --multifile - > $1.gif
+	  rm out-static*.png
+	else
+	  ffmpeg -i $1 -s 600x400 -pix_fmt rgb24 -r 10 -f gif - | gifsicle --optimize=3 --delay=3 > $1.gif
+	fi
+  else
+	echo "proper usage: gifify <input_movie.mov>. You DO need to include extension."
+  fi
+}
+
+chr() {
+  printf \\$(printf '%03o' $1)
+  echo
+}
+
+ord() {
+  printf '%d' "'$1"
+  echo
+}
+
+hf() {
+  history | grep -i "$@" | grep -v "hf $@"
+}
+
+function txt() { grep -rHn --exclude=*.map --exclude=*.min.* $@ *; }
+function itxt() { grep -rHin --exclude=*.map --exclude=*.min.* $@ *; }
+
+# Not pretty, but works. Use 'jq' for more elaborate stuff
+function json() { cat "$@" | node -e 'let s,pin=process.stdin;pin.on("readable",()=>(s=pin.read())&&console.log(JSON.stringify(JSON.parse(s),null,4)));' }
+#function json() { cat “$@” | /usr/bin/python -m json.tool ;}
+
+# List directories by size, largest on top
+function dus () {
+du --max-depth=0 -k * | sort -nr | awk '{ if($1>=1024*1024) {size=$1/1024/1024; unit="G"} else if($1>=1024) {size=$1/1024; unit="M"} else {size=$1; unit="K"}; if(size<10) format="%.1f%s"; else format="%.0f%s"; res=sprintf(format,size,unit); printf "%-8s %s\n",res,$2 }'
+}
+
+myip() {
+    curl http://ipecho.net/plain;
+    echo;
+}
+
+up()
+{
+    dir=""
+    if [ -z "$1" ]; then
+        dir=..
+    elif [[ $1 =~ ^[0-9]+$ ]]; then
+        x=0
+        while [ $x -lt ${1:-1} ]; do
+            dir=${dir}../
+            x=$(($x+1))
+        done
+    else
+        dir=${PWD%/$1/*}/$1
+    fi
+    cd "$dir";
+}
+
+
