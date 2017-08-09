@@ -10,13 +10,13 @@ function pvers()
 {
     if [ -f "./package.json" ]; then
         TMPMV=$(sed -nr 's/^\s*"version":\s*"([^"]+)".*$/\1/p' ./package.json)
-        TMPMN=$(sed -nr 's/^\s*"name":\s*"([^"]+)".*$/\1/p' ./package.json)
+        TMPMN=$(sed -nr 's/^\s{2,4}"name":\s*"([^ "]+)".*$/\1/p' ./package.json)
     elif [ -f "../package.json" ]; then
         TMPMV=$(sed -nr 's/^\s*"version": "([^"]+)".*$/\1/p' ../package.json)
-        TMPMN=$(sed -nr 's/^\s*"name":\s*"([^"]+)".*$/\1/p' ../package.json)
+        TMPMN=$(sed -nr 's/^\s{2,4}"name":\s*"([^ "]+)".*$/\1/p' ../package.json)
     elif [ -f "../../package.json" ]; then
         TMPMV=$(sed -nr 's/^\s*"version": "([^"]+)".*$/\1/p' ../../package.json)
-        TMPMN=$(sed -nr 's/^\s*"name":\s*"([^"]+)".*$/\1/p' ../../package.json)
+        TMPMN=$(sed -nr 's/^\s{2,4}"name":\s*"([^ "]+)".*$/\1/p' ../../package.json)
     fi
 }
 
@@ -56,11 +56,11 @@ parse_git_branch() {
 
     local extra='';
 
-    if [ -n $TMPMN ]; then
-        extra=" of ${TMPMN}@${TMPMV}"
+    if [ ! -z "$TMPMN" ]; then
+        extra="${TMPMN}"'@'"${TMPMV}/"
     fi
 
-  	printf "${1:-(%s)}${s}${extra}" "${ref#refs/heads/}"
+  	printf "${1:-(%s%s)}${s}" "$extra" "${ref#refs/heads/}"
 }
 
 pimp_prompt() {
