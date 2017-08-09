@@ -1,0 +1,50 @@
+#!/bin/bash
+
+PROGRAM=`basename "$0"`
+UNITE=`which pdfunite`
+SEPARATE=`which pdfseparate`
+
+if [ $# -lt 2 ]; then
+	echo "Usage: $PROGRAM PDF-FILE PAGE-TO_REMOVE OUT-PDF-FILE"
+	exit 1
+fi
+
+PDFFILE="$1"
+PAGE="$2"
+OUTFILE="${3:-tmp$PDFFILE}"
+
+# echo pdffile: "$PDFFILE"
+# echo page: "$PAGE"
+# echo outfile: "$OUTFILE"
+# echo program: "$PROGRAM"
+# exit
+
+if [ -z "$PDFFILE" ] || [ -z "$PAGE" ]; then
+	echo "Usage: $PROGRAM PDF-FILE PAGE-TO_REMOVE OUT-PDF-FILE"
+	exit 1
+fi
+
+"$SEPARATE" "$PDFFILE" tmp-%d.pdf
+
+# PAGENUM=0
+# COMBO=""
+
+# for pdf in tmp-*.pdf; do
+	# if [ "$pdf" != "tmp-${PAGE}.pdf" ]; then
+		# COMBO="$COMBO $pdf"
+	# fi
+# done
+
+COMBINE=( $(ls -1 tmp-*.pdf | grep -v "tmp-${PAGE}.pdf") )
+echo
+echo
+echo COMBINE ${COMBINE[*]} = $COMBINE
+echo
+echo
+echo "$UNITE" "${COMBINE[@]}" "$OUTFILE"
+echo
+echo
+echo
+"$UNITE" "${COMBINE[@]}" "$OUTFILE"
+rm tmp-*.pdf
+
