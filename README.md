@@ -1,5 +1,6 @@
-# Paul's dotfiles
+# Julian's dotfiles
 
+* This was originally cloned from dotfiles of Paul Irish. I removed most of the OSX stuff as I don't use that. Most of this README file were written by Paul. You can find the original here: [Paul Irish dotfiles](https://github.com/paulirish/dotfiles)
 * I maintain this repo as *my* dotfiles, but I'm keenly aware people are using it for theirs.
 * You're quite welcome to make suggestions, however I may decline if it's not of personal value to me.
 * If you're starting off consider forking [mathias](https://github.com/mathiasbynens/dotfiles/) or [alrra](https://github.com/alrra/dotfiles/). paulmillr and gf3 also have great setups
@@ -9,8 +10,7 @@
 
 * fork this to your own acct
 * clone that repo
-* read and run parts of `setup-a-new-machine.sh`
-* read and run `symlink-setup.sh`
+* run `symlink-setup.sh`
   * git config needs attention, read the notes.
 * use it. yay!
 
@@ -18,8 +18,6 @@
 
 * commit/push changes you want.
 * you can also hypothetically cherry-pick commits from me and mathias and our fork ecosystem.
-
-
 
 ## my favorite parts.
 
@@ -69,7 +67,6 @@ Lastly, I use `open .` to open Finder from this path. (That's just available nor
 * `.extra` - not included, explained above
 
 #### manual run
-* `setup-a-new-machine.sh` - random apps i need installed
 * `symlink-setup.sh`  - sets up symlinks for all dotfiles and vim config.
 * `.osx` - run on a fresh osx setup
 * `brew.sh` & `brew-cask.sh` - homebrew initialization

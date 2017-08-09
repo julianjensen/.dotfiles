@@ -1,4 +1,3 @@
-
 # Install from a .deb package
 function debinst() {
 	packname=$(dpkg -I $1 | grep Package | awk '{print $2}')
@@ -144,7 +143,10 @@ function txt() { grep -rHn --exclude=*.map --exclude=*.min.* $@ *; }
 function itxt() { grep -rHin --exclude=*.map --exclude=*.min.* $@ *; }
 
 # Not pretty, but works. Use 'jq' for more elaborate stuff
-#function json() { cat "$@" | node -e 'let s,pin=process.stdin;pin.on("readable",()=>(s=pin.read())&&console.log(JSON.stringify(JSON.parse(s),null,4)));' }
+function json()
+{
+    cat "$@" | node -e 'let s,pin=process.stdin;pin.on("readable",()=>(s=pin.read())&&console.log(JSON.stringify(JSON.parse(s),null,4)));';
+}
 #function json() { cat “$@” | /usr/bin/python -m json.tool ;}
 
 # List directories by size, largest on top
@@ -174,12 +176,11 @@ up()
     cd "$dir";
 }
 
+# From this original
+# find . -maxdepth 4 -type d -name node_modules -print0 | xargs -0 -L1 sh -c 'cd "$0/.." && pwd && npm ls 2>/dev/null | grep -E "babelcli|crossenv|cross-env.js|d3.js|fabric-js|ffmepg|gruntcli|http-proxy.js|jquery.js|mariadb|mongose|mssql.js|mssql-node|mysqljs|nodecaffe|nodefabric|node-fabric|nodeffmpeg|nodemailer-js|nodemailer.js|nodemssql|node-opencv|node-opensl|node-openssl|noderequest|nodesass|nodesqlite|node-sqlite|node-tkinter|opencv.js|openssl.js|proxy.js|shadowsock|smb|sqlite.js|sqliter|sqlserver|tkinter"'
+#
 npmscan()
 {
-    local verbose=
-    local directory=
-
-    # find .  -maxdepth 4 -type d -name node_modules -print0 | xargs -0 -L1 sh -c 'cd "$0/.." && pwd && npm ls 2>/dev/null | grep -E "babelcli|crossenv|cross-env.js|d3.js|fabric-js|ffmepg|gruntcli|http-proxy.js|jquery.js|mariadb|mongose|mssql.js|mssql-node|mysqljs|nodecaffe|nodefabric|node-fabric|nodeffmpeg|nodemailer-js|nodemailer.js|nodemssql|node-opencv|node-opensl|node-openssl|noderequest|nodesass|nodesqlite|node-sqlite|node-tkinter|opencv.js|openssl.js|proxy.js|shadowsock|smb|sqlite.js|sqliter|sqlserver|tkinter"'
 
     if [[ -z $1 ]]; then
         $1='.'
@@ -202,4 +203,3 @@ npmscan()
         find "$dir" -maxdepth 6 -type d -name node_modules -print0 | xargs -0 -L1 sh -c 'cd "$0/.." && pwd && npm ls 2>/dev/null | grep -E "babelcli|crossenv|cross-env.js|d3.js|fabric-js|ffmepg|gruntcli|http-proxy.js|jquery.js|mariadb|mongose|mssql.js|mssql-node|mysqljs|nodecaffe|nodefabric|node-fabric|nodeffmpeg|nodemailer-js|nodemailer.js|nodemssql|node-opencv|node-opensl|node-openssl|noderequest|nodesass|nodesqlite|node-sqlite|node-tkinter|opencv.js|openssl.js|proxy.js|shadowsock|smb|sqlite.js|sqliter|sqlserver|tkinter"'
     done
 }
-

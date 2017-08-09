@@ -2,26 +2,30 @@
 # but customized to me. <3
 
 TMPMV=
+TMPMN=
+unset MODULE_VERSION
+unset MODULE_NAME
 
 function pvers()
 {
     if [ -f "./package.json" ]; then
-        TMPMV=$(sed -nr 's/^\s*"version": "([^"]+)".*$/\1/p' ./package.json)
+        TMPMV=$(sed -nr 's/^\s*"version":\s*"([^"]+)".*$/\1/p' ./package.json)
+        TMPMN=$(sed -nr 's/^\s*"name":\s*"([^"]+)".*$/\1/p' ./package.json)
     elif [ -f "../package.json" ]; then
         TMPMV=$(sed -nr 's/^\s*"version": "([^"]+)".*$/\1/p' ../package.json)
+        TMPMN=$(sed -nr 's/^\s*"name":\s*"([^"]+)".*$/\1/p' ../package.json)
     elif [ -f "../../package.json" ]; then
         TMPMV=$(sed -nr 's/^\s*"version": "([^"]+)".*$/\1/p' ../../package.json)
+        TMPMN=$(sed -nr 's/^\s*"name":\s*"([^"]+)".*$/\1/p' ../../package.json)
     fi
 }
 
 parse_git_branch() {
 	local s='';
 
-#  unset MODULE_VERSION
+    pvers
 
-#    pvers
-
-  ref=$(git symbolic-ref -q HEAD 2> /dev/null) || return
+    ref=$(git symbolic-ref -q HEAD 2> /dev/null) || return
 
 	# Ensure the index is up to date.
 	git update-index --really-refresh -q &>/dev/null;
@@ -50,14 +54,13 @@ parse_git_branch() {
 		s="[${s}]";
 	fi;
 
-  	printf "${1:-(%s)}${s}" "${ref#refs/heads/}"
-}
+    local extra='';
 
-parse_svn_revision() {
-  local DIRTY REV=$(svn info 2>/dev/null | grep Revision | sed -e 's/Revision: //')
-  [ "$REV" ] || return
-  [ "$(svn st)" ] && DIRTY=' *'
-  echo "(r$REV$DIRTY)"
+    if [ -n $TMPMN ]; then
+        extra=" of ${TMPMN}@${TMPMV}"
+    fi
+
+  	printf "${1:-(%s)}${s}${extra}" "${ref#refs/heads/}"
 }
 
 pimp_prompt() {
@@ -79,13 +82,14 @@ pimp_prompt() {
     TITLEBAR=""
     ;;
   esac
-#PS1="${TITLEBAR}[$WHITE\u@$BLUE_BOLD\h$WHITE \w$GREEN\$(parse_git_branch)\$(parse_svn_revision) $RED\$(~/.rvm/bin/rvm-prompt v g)$WHITE]\$ "
-#PS1="${TITLEBAR}[$WHITE\u@$BLUE_BOLD\h$WHITE \w$GREEN\$(parse_git_branch)\$(parse_svn_revision)$WHITE]\$ "
-PS1="${TITLEBAR}$WHITE\w$GREEN\$(parse_git_branch)\$(parse_svn_revision)$WHITE\$ "
+#PS1="${TITLEBAR}[$WHITE\u@$BLUE_BOLD\h$WHITE \w$GREEN\$(parse_git_branch) $RED\$(~/.rvm/bin/rvm-prompt v g)$WHITE]\$ "
+#PS1="${TITLEBAR}[$WHITE\u@$BLUE_BOLD\h$WHITE \w$GREEN\$(parse_git_branch)$WHITE]\$ "
+PS1="${TITLEBAR}$WHITE\w$GREEN\$(parse_git_branch)$WHITE\$ "
 PS2='> '
 PS4='+ '
 }
 pimp_prompt
 export MODULE_VERSION="$TMPMV"
-export TMPMV
+export MODULE_NAME="$TMPMN"
+export TMPMV TMPMN
 

@@ -1,8 +1,10 @@
 # This .gitconfig needs at least one of the following to be installed
 # https://github.com/git/git/tree/master/contrib/diff-highlight
 # https://github.com/so-fancy/diff-so-fancy
+#
 # And you should consider installing
 # https://github.com/jamiew/git-friendly
+#
 # I also have this lovely code installed:
 # https://github.com/git/git/blob/master/contrib/completion/git-completion.bash
 
@@ -101,7 +103,7 @@
 
     abbrev = 12
     attributesfile = ~/.gitattributes
-	autocrlf = input
+    autocrlf = input
     editor = vim
     excludesfile = ~/.gitignore
 
@@ -136,10 +138,17 @@
 	excludesfile = ~/.gitignore
 	attributesfile = ~/.gitattributes
 	# insanely beautiful diffs
-	# pager = diff-highlight | diff-so-fancy | less -r
+	pager = diff-highlight | diff-so-fancy | less -r
 
 [color]
 	ui = auto
+
+[color "diff-highlight"]
+
+    oldNormal = red bold
+    oldHighlight = red bold 52
+    newNormal = green bold
+    newHighlight = green bold 22
 
 [color "branch"]
 

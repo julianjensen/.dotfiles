@@ -1,6 +1,9 @@
 {
     "parserOptions": {
         "ecmaVersion": 8,
+        "ecmaFeatures": {
+            "experimentalObjectRestSpread": true
+        },
         "sourceType": "module"
     },
     "root": true,
@@ -8,13 +11,9 @@
         "es6": true,
         "node": true,
         "mocha": true,
-        "mongo": true,
-        "browser": true,
-        "webextensions": true
+        "mongo": true
     },
     "plugins": [
-        "standard",
-        "promise"
     ],
     "globals": {
         "document": false,
@@ -27,6 +26,8 @@
         "JSON": true
     },
     "rules": {
+        "func-call-spacing": [ 2, "never" ],
+        "prefer-promise-reject-errors": 2,
         "max-len": [ "error", 240 ],
         "max-depth": [ "error", 5 ],
         "max-lines": [ "error", 1500 ],
@@ -62,7 +63,7 @@
             "last"
         ],
         "constructor-super": 2,
-        "curly": "off",
+        "curly": [ 1, "multi-or-nest" ],
         "dot-location": [
             2,
             "property"
@@ -99,6 +100,8 @@
                 "capIsNew": false
             }
         ],
+        "no-alert": 2,
+        "no-caller": 2,
         "new-parens": 2,
         "no-array-constructor": 2,
         "no-caller": 2,
@@ -121,10 +124,15 @@
         "no-extra-bind": 2,
         "no-extra-boolean-cast": 2,
         "no-extra-parens": [
-            2,
-            "functions"
+            "error",
+            "all",
+            {
+                "conditionalAssign": false,
+                "returnAssign": false,
+                "nestedBinaryExpressions": false
+            }
         ],
-        "no-fallthrough": 2,
+        "no-fallthrough": 1,
         "no-floating-decimal": 2,
         "no-func-assign": 2,
         "no-implied-eval": 2,
@@ -132,9 +140,10 @@
             2,
             "functions"
         ],
+        "guard-for-in": 1,
         "no-trailing-spaces": "off",
         "no-invalid-regexp": 2,
-        "no-irregular-whitespace": 2,
+        "no-irregular-whitespace": "off",
         "no-iterator": 2,
         "no-label-var": 2,
         "no-labels": [
@@ -198,6 +207,7 @@
             }
         ],
         "no-useless-call": 2,
+        "no-useless-return": 2,
         "no-useless-computed-key": 2,
         "no-useless-constructor": 2,
         "no-useless-escape": 2,
@@ -275,7 +285,6 @@
                     ","
                 ],
                 "exceptions": [
-                    "use strict",
                     "*"
                 ]
             }
@@ -292,13 +301,16 @@
         ],
         "yield-star-spacing": [
             2,
-            {"before": true, "after": false}
+            "both"
         ],
         "yoda": [
             2,
             "never"
         ],
-        "promise/param-names": 2,
-        "computed-property-spacing": [ "error", "always" ]
+        "array-bracket-newline": [ 1, { "multiline": true } ],
+        "array-bracket-spacing": [ 2, "always" ],
+        "object-curly-spacing": [ 2, "always" ],
+        "block-spacing": [ 2, "always" ],
+        "computed-property-spacing": [ 1, "always" ]
     }
 }

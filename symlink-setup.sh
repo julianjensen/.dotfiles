@@ -23,9 +23,7 @@
 #!/bin/bash
 
 answer_is_yes() {
-    [[ "$REPLY" =~ ^[Yy]$ ]] \
-        && return 0 \
-        || return 1
+    [[ "$REPLY" =~ ^[Yy]$ ]] && return 0 || return 1
 }
 
 ask() {
@@ -137,9 +135,7 @@ print_question() {
 }
 
 print_result() {
-    [ $1 -eq 0 ] \
-        && print_success "$2" \
-        || print_error "$2"
+    [ $1 -eq 0 ] && print_success "$2" || print_error "$2"
 
     return $1
 }
@@ -197,6 +193,9 @@ main() {
 
     done
 
+    echo You will need to install "diff-so-fancy" as sudo, like so: sudo npm i -g diff-so-fancy
+    echo or you can run "sudo global-npm" from the 'bin/' directory in this repo to install
+    echo various generally useful modules, including diff-so-fancy.
 }
 
 main

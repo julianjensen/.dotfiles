@@ -175,4 +175,3 @@ alias ns="netstat -vWeepl --tcp"
 alias nsn="netstat -vWneepl --tcp"
 alias ducks='du -cks * | sort -rn | head'
 
-
