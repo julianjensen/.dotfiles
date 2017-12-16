@@ -6,17 +6,26 @@ TMPMN=
 unset MODULE_VERSION
 unset MODULE_NAME
 
+function pver()
+{
+    TMPMV=$(sed -nr 's/^\s{2,4}"version":\s*"([^"]+)".*$/\1/p' "$1")
+    TMPMN=$(sed -nr 's/^\s{2,4}"name":\s*"([^ "]+)".*$/\1/p' "$1")
+}
+
 function pvers()
 {
     if [ -f "./package.json" ]; then
-        TMPMV=$(sed -nr 's/^\s*"version":\s*"([^"]+)".*$/\1/p' ./package.json)
-        TMPMN=$(sed -nr 's/^\s{2,4}"name":\s*"([^ "]+)".*$/\1/p' ./package.json)
+        pver "./package.json"
+#        TMPMV=$(sed -nr 's/^\s*"version":\s*"([^"]+)".*$/\1/p' ./package.json)
+#        TMPMN=$(sed -nr 's/^\s{2,4}"name":\s*"([^ "]+)".*$/\1/p' ./package.json)
     elif [ -f "../package.json" ]; then
-        TMPMV=$(sed -nr 's/^\s*"version": "([^"]+)".*$/\1/p' ../package.json)
-        TMPMN=$(sed -nr 's/^\s{2,4}"name":\s*"([^ "]+)".*$/\1/p' ../package.json)
+        pver "../package.json"
+#        TMPMV=$(sed -nr 's/^\s*"version": "([^"]+)".*$/\1/p' ../package.json)
+#        TMPMN=$(sed -nr 's/^\s{2,4}"name":\s*"([^ "]+)".*$/\1/p' ../package.json)
     elif [ -f "../../package.json" ]; then
-        TMPMV=$(sed -nr 's/^\s*"version": "([^"]+)".*$/\1/p' ../../package.json)
-        TMPMN=$(sed -nr 's/^\s{2,4}"name":\s*"([^ "]+)".*$/\1/p' ../../package.json)
+        pver "../../package.json"
+#        TMPMV=$(sed -nr 's/^\s*"version": "([^"]+)".*$/\1/p' ../../package.json)
+#        TMPMN=$(sed -nr 's/^\s{2,4}"name":\s*"([^ "]+)".*$/\1/p' ../../package.json)
     fi
 }
 

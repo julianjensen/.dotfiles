@@ -13,6 +13,8 @@
 	up = pull
 	p = push
 	podev = push origin development
+	pulom = pull origin master
+	pusom = push origin master
 	s = status -s
 	df = diff --color --color-words --abbrev
 	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --
