@@ -8,7 +8,7 @@ unset MODULE_NAME
 
 function pver()
 {
-    TMPMV=$(sed -nr 's/^\s{2,4}"version":\s*"([^"]+)".*$/\1/p' "$1")
+    TMPMV=$(sed -nr 's/^\s{2,4}"version":\s*"([^ "]+)".*$/\1/p' "$1")
     TMPMN=$(sed -nr 's/^\s{2,4}"name":\s*"([^ "]+)".*$/\1/p' "$1")
 }
 
