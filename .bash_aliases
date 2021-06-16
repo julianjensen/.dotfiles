@@ -1,3 +1,18 @@
+# shellcheck shell=bash
+
+alias start='pushd "$PROJECT_ROOT" > /dev/null && yarn run start-all && popd > /dev/null'
+alias stop='pushd "$PROJECT_ROOT" > /dev/null && yarn run stop-all && popd > /dev/null'
+alias test='pushd "$PROJECT_ROOT" > /dev/null && yarn test:backend && popd > /dev/null'
+
+alias fd=fdfind
+alias initsys='ps --no-headers -o comm 1'
+alias sloc="sloc -e '.*node_modules.*'"
+alias fixc='sudo umount /mnt/c && sudo mount -t drvfs C:\\ /mnt/c'
+alias fixd='sudo umount /mnt/d && sudo mount -t drvfs D:\\ /mnt/d'
+alias fixe='sudo umount /mnt/e && sudo mount -t drvfs E:\\ /mnt/e'
+alias fixf='sudo umount /mnt/f && sudo mount -t drvfs F:\\ /mnt/f'
+alias fix='uconv -f utf8 -t utf8 -x NFC'
+alias ui='dbus-launch --exit-with-x11'
 alias today='date +"%A, %B %-d, %Y"'
 alias now='date +"%T"'
 alias cd..='cd ..'
@@ -7,8 +22,10 @@ alias ....='cd ../../../'
 alias .....='cd ../../../../'
 alias t='clear;tail -50'
 alias c='clear'
+alias '+'=pushd
 
-alias ping='ping -c 10 -s.2'
+alias ping='ping -c 4'
+alias .2='cd ../../'
 alias .3='cd ../../../'
 alias .4='cd ../../../../'
 alias .5='cd ../../../../../'
@@ -30,8 +47,11 @@ alias firewall=iptlist
 # nmcli -t -f DEVICE connection show --active
 # ip route show | egrep '^default' | cut -d' ' -f 5
 
-alias xclip='xclip -selection c'
-alias ack='ack -k --ignore-dir=node_modules'
+#alias xclip='xclip -selection c'
+alias ack='ack -k --ignore-dir=node_modules --ignore-dir=__tests__'
+alias ag='ag --ignore=node_modules --ignore=__tests__'
+#alias rg="rg -g '!**/node_modules/**/*' -g '!**/test/**/*' -g '!*[-_]test\.*' -g '!**/__tests__/**/*'"
+alias rgt="rg -g '!**/node_modules/**/*'"
 
 alias inst='sudo apt-get install'
 alias update='sudo apt-get update'
@@ -39,7 +59,8 @@ alias upgrade='sudo apt-get update && sudo apt-get upgrade && sudo apt autoremov
 alias search='apt-cache search'
 
 if hash nmcli 2>/dev/null; then
-	export NIC=$(nmcli -t -f DEVICE c s -a)
+    NIC=$(nmcli -t -f DEVICE c s -a)
+    export NIC
 	alias dnstop='sudo dnstop -l 5 '${NIC}
 	alias vnstat='sudo vnstat -i '${NIC}
 	alias iftop='sudo iftop -i '${NIC}
@@ -79,6 +100,7 @@ alias rot13='tr a-zA-Z n-za-mN-ZA-M'
 
 # top is atop, just like vi is vim
 alias top='atop'
+alias btop=bashtop
 
 ## Memcached server status  ##
 alias mcdstats='/usr/local/bin/memcached-tool 127.0.0.1:11211 stats'
@@ -105,9 +127,9 @@ alias filetree="find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'"
 if ls --color > /dev/null 2>&1; then colorflag="--color"; else colorflag="-G"; fi;
 export CLICOLOR_FORCE=1
 
-# ls options: A = include hidden (but not . or ..), F = put `/` after folders, h = byte unit suffixes
-alias la='ls -lAFh ${colorflag} --group-directories-first'
-alias ll='ls -lFh ${colorflag} --group-directories-first'
+# ls options: A = include hidden (but not . or ..), F = put `/` after folders, h = byte unit suffixes, N = no quotes
+alias la='ls -lAFhN ${colorflag} --group-directories-first'
+alias ll='ls -lFhN ${colorflag} --group-directories-first'
 alias lsd='ls -l | grep "^d"' # only directories
 alias gls='git br -l'
 ###
@@ -144,8 +166,6 @@ for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
 	alias "$method"="lwp-request -m '$method'"
 done
 
-alias lls="ls -Fla $1 $2 $3 $4 $5  | awk '{ print; x=x+\$5 } END { print \"total bytes = \",x }'"
-
 alias machine="echo you are logged in to `uname -a | cut -f2 -d' '`"
 alias connections='sudo lsof -n -P -i +c 15'
 
@@ -175,3 +195,8 @@ alias ns="netstat -vWeepl --tcp"
 alias nsn="netstat -vWneepl --tcp"
 alias ducks='du -cks * | sort -rn | head'
 
+alias yt="youtube-dl --add-metadata -ic"
+alias yta="youtube-dl --add-metadata -xic"
+
+alias ethspeed="speedometer -rx eth0"
+alias speedtest=speedtest-cli

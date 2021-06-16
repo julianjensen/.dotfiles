@@ -1,104 +1,283 @@
-# This prompt inspired by gf3, sindresorhus, alrra, and mathiasbynens.
-# but customized to me. <3
+#!/usr/bin/env bash
 
-TMPMV=
-TMPMN=
-unset MODULE_VERSION
-unset MODULE_NAME
+# # `pwd` is inside a git-controlled repository
+# git rev-parse --is-inside-work-tree
+#
+# # `pwd` is inside the .git directory
+# git rev-parse --is-inside-git-dir
+#
+# # path to the .git directory (may be relative or absolute)
+# git rev-parse --git-dir
+#
+# # inverses of each other:
+# # `pwd` relative to root of repository
+# git rev-parse --show-prefix
+#
+# # root of repository relative to `pwd`
+# git rev-parse --show-cdup
+# From here: https://unix.stackexchange.com/questions/6463/find-searching-in-parent-directories-instead-of-subdirectories
 
-function pver()
-{
-    TMPMV=$(sed -nr 's/^\s{2,4}"version":\s*"([^ "]+)".*$/\1/p' "$1")
-    TMPMN=$(sed -nr 's/^\s{2,4}"name":\s*"([^ "]+)".*$/\1/p' "$1")
+shopt -s extglob
+
+LASTPVERS=
+PROMPT_LEADING_SPACE=""
+
+
+findUp () {
+    local cur
+    cur=$(pwd)
+
+    while [[ "$cur" != "" && ! -e "$cur/$1" ]]; do
+        cur=${cur%/*}
+    done
+    echo "$cur"
 }
 
-function pvers()
-{
-    if [ -f "./package.json" ]; then
-        pver "./package.json"
-#        TMPMV=$(sed -nr 's/^\s*"version":\s*"([^"]+)".*$/\1/p' ./package.json)
-#        TMPMN=$(sed -nr 's/^\s{2,4}"name":\s*"([^ "]+)".*$/\1/p' ./package.json)
-    elif [ -f "../package.json" ]; then
-        pver "../package.json"
-#        TMPMV=$(sed -nr 's/^\s*"version": "([^"]+)".*$/\1/p' ../package.json)
-#        TMPMN=$(sed -nr 's/^\s{2,4}"name":\s*"([^ "]+)".*$/\1/p' ../package.json)
-    elif [ -f "../../package.json" ]; then
-        pver "../../package.json"
-#        TMPMV=$(sed -nr 's/^\s*"version": "([^"]+)".*$/\1/p' ../../package.json)
-#        TMPMN=$(sed -nr 's/^\s{2,4}"name":\s*"([^ "]+)".*$/\1/p' ../../package.json)
+function pvers() {
+
+    local here
+    here=$(pwd)
+
+    if [[ "$here" == "$LASTPVERS" ]]; then
+        return
+    fi
+
+    LASTPVERS="$here"
+
+    MODULE_VERSION=""
+    MODULE_NAME=""
+
+    local pjson
+    local ljson
+    pjson=$(findUp package.json)
+    ljson=$(findUp lerna.json)
+
+    if [[ -z "${pjson:+x}" ]]; then
+        return
+    fi
+
+    pjson="${pjson-}/package.json"
+    ljson="${ljson-}/lerna.json"
+
+    if [[ -f "$ljson" ]]; then
+        MODULE_VERSION=$(sed -nr 's/^\s{2,4}"version":\s*"([^ "]+)".*$/\1/p' "$ljson")
+    fi
+
+    if [[ -z "${MODULE_VERSION:+x}" ]]; then
+        MODULE_VERSION=$(sed -nr 's/^\s{2,4}"version":\s*"([^ "]+)".*$/\1/p' "$pjson")
+    fi
+
+    MODULE_NAME=$(sed -nr 's/^\s{2,4}"name":\s*"([^ "]+)".*$/\1/p' "$pjson")
+}
+
+function we_are_on_repo() {
+    if [[ -e "$(git rev-parse --git-dir 2> /dev/null)" ]]; then
+        echo "yes"
+    else
+        echo "no"
     fi
 }
 
-parse_git_branch() {
-	local s='';
+define_color_names() {
+    ColorNames=(Black Red Green Yellow Blue Magenta Cyan White)
+    FgColors=(30 31 32 33 34 35 36 37)
+    BgColors=(40 41 42 43 44 45 46 47)
+
+    local AttrNorm=0
+    local AttrBright=1
+    local AttrDim=2
+    local AttrUnder=4
+    local AttrBlink=5
+    local AttrRev=7
+    local AttrHide=8
+
+    # define "BoldCOLOR", "BrightCOLOR", and "DimCOLOR" names
+
+    # _map_colors ATTRNAME ATTRVALUE
+    #
+    # Defines three names for every color, attribute combintaion:
+    #    {ATTRNAME}{COLORNAME}
+    #    {ATTRNAME}{COLORNAME}Fg
+    #    {ATTRNAME}{COLORNAME}Bg
+    #
+    # Example: BoldRed, BoldRedFg, BoldRedBg
+
+    _map_colors() {
+        local x=0
+        local attrname="${1}"
+        local attrcode="${2}"
+        while ((x < 8)); do
+            local colorname="${ColorNames[x]}"
+            local fgcolorcode="${FgColors[x]}"
+            local bgcolorcode="${BgColors[x]}"
+            local longcolorname="${attrname}${colorname}"
+            _def_color "${longcolorname}" "${attrcode}" "${fgcolorcode}"
+            _def_color "${longcolorname}Fg" "${attrcode}" "${fgcolorcode}"
+            _def_color "${longcolorname}Bg" "${attrcode}" "${bgcolorcode}"
+            ((x++))
+        done
+    }
+
+    # _term_color [ N | N M ]
+    _term_color() {
+        local cv
+        if [[ ${#} -gt 1 ]]; then
+            cv="${1};${2}"
+        else
+            cv="${1}"
+        fi
+        echo "\[\033[${cv}m\]"
+    }
+
+    # def_color NAME ATTRCODE COLORCODE
+    _def_color() {
+        local def="${1}=\"\`_term_color ${2} ${3}\`\""
+        eval "${def}"
+    }
+
+    _map_colors Bold ${AttrBright}
+    _map_colors Bright ${AttrBright}
+    _map_colors Dim ${AttrDim}
+    _map_colors '' ${AttrNorm}
+
+    _def_color IntenseBlack 0 90
+    _def_color ResetColor 0 0
+}
+
+if [[ "${GPDEF-}" != "DONE" ]]; then
+    GPDEF="DONE"
+    define_color_names
+fi
+
+# These are the color definitions used by gitprompt.sh
+GIT_PROMPT_PREFIX="["    # start of the git info string
+GIT_PROMPT_SUFFIX="]"    # the end of the git info string
+GIT_PROMPT_SEPARATOR="|" # separates each item
+
+GIT_PROMPT_BRANCH="${Magenta}"                  # the git branch that is active in the current directory
+GIT_PROMPT_MASTER_BRANCH="${GIT_PROMPT_BRANCH}" # used if the git branch that is active in the current directory is $GIT_PROMPT_MASTER_BRANCHES
+GIT_PROMPT_STAGED="${Red}● "                     # the number of staged files/directories
+GIT_PROMPT_CONFLICTS="${Red}✖ "                 # the number of files in conflict
+GIT_PROMPT_CHANGED="${BrightBlue}✚ "                  # the number of changed files
+
+#GIT_PROMPT_REMOTE=" "              # the remote branch name (if any) and the symbols for ahead and behind
+GIT_PROMPT_UNTRACKED="${Cyan}… "    # the number of untracked files/dirs
+GIT_PROMPT_STASHED="${BoldBlue}⚑ " # the number of stashed files/dir
+GIT_PROMPT_CLEAN="${BoldGreen}✔ "   # a colored flag indicating a "clean" repo
+
+# Please do not add colors to these symbols
+GIT_PROMPT_SYMBOLS_AHEAD="↑·"             # The symbol for "n versions ahead of origin"
+GIT_PROMPT_SYMBOLS_BEHIND="↓·"            # The symbol for "n versions behind of origin"
+GIT_PROMPT_SYMBOLS_PREHASH=":"            # Written before hash of commit, if no name could be found
+GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING="${Yellow}↺ " # This symbol is written after the branch, if the branch is not tracked
+GIT_PROMPT_SYMBOLS_REMOTE_TRACKING="${Green}→ " # This symbol is written after the branch, if the branch is not tracked
+
+GIT_PROMPT_MASTER_BRANCHES='@(master|production)'
+
+function updatePrompt()
+{
+    local STATUS=""
+    local GIT_BRANCH=""
+
+    local PPREFIX
+    local NEW_PROMPT
+
+    local ref
+
+    # Is this inside a git repo. This is super fast.
+    if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == "true" ]]; then
+        PPREFIX="${Yellow}\w${ResetColor} "
+
+        # Ensure the index is up to date. Medium speed. Removed to speed things up just a bit.
+#        git update-index --really-refresh -q &> /dev/null
+
+        # Check for uncommitted changes in the index. This one is fast.
+        if ! git diff --quiet --ignore-submodules --cached; then
+            STATUS+="${GIT_PROMPT_STAGED}"
+        fi
+
+        # Check for unstaged changes. This one is slow.
+        if ! git diff-files --quiet --ignore-submodules --; then
+            STATUS+="${GIT_PROMPT_CHANGED}"
+        fi
+
+        # Check for untracked files. Extremely fast.
+        if [ -n "$(git ls-files --others --exclude-standard)" ]; then
+            STATUS+="${GIT_PROMPT_UNTRACKED}"
+        fi
+
+        # Check for stashed files. Extremely fast.
+        if git rev-parse --verify refs/stash &> /dev/null; then
+            STATUS+="${GIT_PROMPT_STASHED}"
+        fi
+
+        if [[ "$STATUS" == "" ]]; then
+            STATUS="$GIT_PROMPT_CLEAN"
+        fi
+
+        local TRACKING="${GIT_PROMPT_SYMBOLS_NO_REMOTE_TRACKING}"
+        git rev-parse --symbolic-full-name --abbrev-ref @{u} > /dev/null 2>&1 && TRACKING="${GIT_PROMPT_SYMBOLS_REMOTE_TRACKING}"
+
+        STATUS+="${TRACKING}"
+
+        # Get the branch name. Extremely fast.
+        ref=$(git symbolic-ref -q HEAD 2> /dev/null)
+        GIT_BRANCH="${ref#refs/heads/}"
+
+        case "${GIT_BRANCH-}" in
+            ${GIT_PROMPT_MASTER_BRANCHES})
+                local STATUS_PREFIX="${PROMPT_LEADING_SPACE}${GIT_PROMPT_MASTER_BRANCH}${URL_SHORT-}${GIT_BRANCH}${ResetColor}"
+                ;;
+            *)
+                local STATUS_PREFIX="${PROMPT_LEADING_SPACE}${GIT_PROMPT_BRANCH}${URL_SHORT-}${GIT_BRANCH}${ResetColor}"
+                ;;
+        esac
+
+        if [[ -n $STATUS ]]; then
+            STATUS=" ${GIT_PROMPT_SEPARATOR} ${STATUS}"
+        fi
+
+        NEW_PROMPT="${GIT_PROMPT_PREFIX}${STATUS_PREFIX}${STATUS}${ResetColor}${GIT_PROMPT_SUFFIX}"
+    else
+        PPREFIX="${White}\u@${BoldBlue}\h${Yellow} \w${ResetColor} "
+    fi
+
+    local tail=" $ "
+    [[ ${UID} -eq 0 ]] && tail=" # "
+
+    local NODE
 
     pvers
 
-    ref=$(git symbolic-ref -q HEAD 2> /dev/null) || return
-
-	# Ensure the index is up to date.
-	git update-index --really-refresh -q &>/dev/null;
-
-	# Check for uncommitted changes in the index.
-	if ! $(git diff --quiet --ignore-submodules --cached); then
-		s+='+';
-	fi;
-
-	# Check for unstaged changes.
-	if ! $(git diff-files --quiet --ignore-submodules --); then
-		s+='!';
-	fi;
-
-	# Check for untracked files.
-	if [ -n "$(git ls-files --others --exclude-standard)" ]; then
-		s+='?';
-	fi;
-
-	# Check for stashed files.
-	if $(git rev-parse --verify refs/stash &>/dev/null); then
-		s+='$';
-	fi;
-
-	if [ "x${s}" != "x" ]; then
-		s="[${s}]";
-	fi;
-
-    local extra='';
-
-    if [ ! -z "$TMPMN" ]; then
-        extra="${TMPMN}"'@'"${TMPMV}/"
+    if [[ -z "${MODULE_NAME:+x}" ]]; then
+        NODE=""
+    else
+        NODE="(${BoldBlue}${MODULE_NAME}${ResetColor}@${Blue}${MODULE_VERSION}${ResetColor}) "
     fi
 
-  	printf "${1:-(%s%s)}${s}" "$extra" "${ref#refs/heads/}"
+    PS1="${PPREFIX}${NODE}${NEW_PROMPT-}\n ${White}$(printf '%(%H:%M)T')${ResetColor}${tail}"
+
 }
 
-pimp_prompt() {
-  local        BLUE="\[\033[0;34m\]"
-  local   BLUE_BOLD="\[\033[1;34m\]"
-  local         RED="\[\033[0;31m\]"
-  local   LIGHT_RED="\[\033[1;31m\]"
-  local       GREEN="\[\033[0;32m\]"
-  local LIGHT_GREEN="\[\033[1;32m\]"
-  local       WHITE="\[\033[0;37m\]"
-  local  WHITE_BOLD="\[\033[1;37m\]"
-  local  LIGHT_GRAY="\[\033[0;37m\]"
+function install_prompt {
 
-  case $TERM in
-    xterm*)
-    TITLEBAR='\[\033]0;\u@\h:\w\007\]'
-    ;;
-    *)
-    TITLEBAR=""
-    ;;
-  esac
-#PS1="${TITLEBAR}[$WHITE\u@$BLUE_BOLD\h$WHITE \w$GREEN\$(parse_git_branch) $RED\$(~/.rvm/bin/rvm-prompt v g)$WHITE]\$ "
-#PS1="${TITLEBAR}[$WHITE\u@$BLUE_BOLD\h$WHITE \w$GREEN\$(parse_git_branch)$WHITE]\$ "
-PS1="${TITLEBAR}$WHITE\w$GREEN\$(parse_git_branch)$WHITE\$ "
-PS2='> '
-PS4='+ '
+    if [[ -z "${PROMPT_COMMAND:+x}" ]]; then
+        PROMPT_COMMAND=updatePrompt # setGitPrompt
+    else
+        PROMPT_COMMAND="${PROMPT_COMMAND//$'\n'/;}" # convert all new lines to semi-colons
+        PROMPT_COMMAND="${PROMPT_COMMAND#\;}" # remove leading semi-colon
+        PROMPT_COMMAND="${PROMPT_COMMAND%% }" # remove trailing spaces
+        PROMPT_COMMAND="${PROMPT_COMMAND%\;}" # remove trailing semi-colon
+
+        local new_entry="updatePrompt"
+        case ";${PROMPT_COMMAND};" in
+            *";${new_entry};"*)
+                :;;
+            *)
+                PROMPT_COMMAND="${PROMPT_COMMAND};${new_entry}"
+                ;;
+        esac
+    fi
 }
-pimp_prompt
-export MODULE_VERSION="$TMPMV"
-export MODULE_NAME="$TMPMN"
-export TMPMV TMPMN
 
+install_prompt

@@ -162,6 +162,9 @@ main() {
     local sourceFile=""
     local targetFile=""
 
+    mkdir /tmp/LS_COLORS && curl -L https://api.github.com/repos/trapd00r/LS_COLORS/tarball/master | tar xzf - --directory=/tmp/LS_COLORS --strip=1
+    ( cd /tmp/LS_COLORS && sh install.sh )
+
     bash < <( curl https://raw.github.com/jamiew/git-friendly/master/install.sh)
     mkdir ~/code >/dev/null 2>&1
     git clone https://github.com/rupa/z.git ~/code/z

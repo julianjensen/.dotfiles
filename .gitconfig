@@ -13,6 +13,8 @@
 	up = pull
 	p = push
 	podev = push origin development
+	pulod = pull origin development
+	pusod = push -u origin development
 	pulom = pull origin master
 	pusom = push origin master
 	s = status -s
@@ -116,7 +118,7 @@
 
 [pretty]
 
-    #custom = "%C(magenta)%h%C(red)%d %C(yellow)%ar %C(green)%s %C(yellow)(%an)"
+    custom = "%C(magenta)%h%C(red)%d %C(yellow)%ar %C(green)%s %C(yellow)(%an)"
     #                     │        │            │            │             └─ author name
     #                     │        │            │            └─ message
     #                     │        │            └─ date (relative)
@@ -199,3 +201,10 @@
 	trustExitCode = false
 [mergetool]
 	keepBackup = false
+[github]
+	username = julianjensen
+[url "git@git.taservs.net:"]
+	insteadOf = https://git.taservs.net
+[user]
+	email = jjdanois@gmail.com
+	name = Julian Jensen

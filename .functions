@@ -1,21 +1,24 @@
+# shellcheck shell=bash
 # Install from a .deb package
 function debinst() {
+	local packname
 	packname=$(dpkg -I $1 | grep Package | awk '{print $2}')
-	sudo cp $1 /var/cache/apt/archives/
+	sudo cp "$1" /var/cache/apt/archives/
 	sudo apt install "$packname"
 }
 
 # Create a new directory and enter it
 function md() {
-	mkdir -p "$@" && cd "$@"
+	mkdir -p "$@" && cd "$@" || exit
 }
 
 # Push release with tag
 reltag()
 {
-    local VERSION=$(sed -nr 's/^\s*"version": "([^"]+)".*$/\1/p' package.json)
+    local VERSION
+    VERSION=$(sed -nr 's/^\s*"version": "([^"]+)".*$/\1/p' package.json)
 
-    git tag -a v${VERSION}${1}
+    git tag -a "v${VERSION}${1}"
     git push origin release
     git push origin --tags
 }
@@ -34,7 +37,7 @@ function server() {
 
 # Copy w/ progress
 cpp () {
-  rsync -WavP --human-readable --progress $1 $2
+  rsync -WavP --human-readable --progress "$1" "$2"
 }
 
 
@@ -42,7 +45,7 @@ cpp () {
 # get gzipped size
 function gz() {
 	echo "orig size    (bytes): "
-	cat "$1" | wc -c
+	wc -c < "$1"
 	echo "gzipped size (bytes): "
 	gzip -c "$1" | wc -c
 }
@@ -61,34 +64,26 @@ function gz() {
 #	/usr/bin/whois -h whois.internic.net $domain | sed '/NOTICE:/q'
 #}
 
-function localip(){
-	function _localip(){ echo "📶  "$(ipconfig getifaddr "$1"); }
-	export -f _localip
-	local purple="\x1B\[35m" reset="\x1B\[m"
-	networksetup -listallhardwareports | \
-		sed -r "s/Hardware Port: (.*)/${purple}\1${reset}/g" | \
-		sed -r "s/Device: (en.*)$/_localip \1/e" | \
-		sed -r "s/Ethernet Address:/📘 /g" | \
-		sed -r "s/(VLAN Configurations)|==*//g"
-}
-
 # Extract archives - use: extract <file>
 # Based on http://dotfiles.org/~pseup/.bashrc
 function extract() {
 	if [ -f "$1" ] ; then
-		local filename=$(basename "$1")
-		local foldername="${filename%%.*}"
-		local fullpath=`perl -e 'use Cwd "abs_path";print abs_path(shift)' "$1"`
-		local didfolderexist=false
+	    local filename fullpath foldername didfolderexist
+
+		filename=$(basename "$1")
+		foldername="${filename%%.*}"
+		fullpath=$(perl -e 'use Cwd "abs_path";print abs_path(shift)' "$1")
+		didfolderexist=false
+
 		if [ -d "$foldername" ]; then
 			didfolderexist=true
-			read -p "$foldername already exists, do you want to overwrite it? (y/n) " -n 1
+			read -p "$foldername already exists, do you want to overwrite it? (y/n) " -n 1 -r
 			echo
 			if [[ $REPLY =~ ^[Nn]$ ]]; then
 				return
 			fi
 		fi
-		mkdir -p "$foldername" && cd "$foldername"
+		mkdir -p "$foldername" && cd "$foldername" || exit
 		case $1 in
 			*.tar.bz2) tar xjf "$fullpath" ;;
 			*.tar.gz) tar xzf "$fullpath" ;;
@@ -111,7 +106,8 @@ function extract() {
 
 # animated gifs from any video
 # from alex sexton   gist.github.com/SlexAxton/4989674
-gifify() {
+gifify()
+{
   if [[ -n "$1" ]]; then
 	if [[ $2 == '--good' ]]; then
 	  ffmpeg -i $1 -r 10 -vcodec png out-static-%05d.png
@@ -126,13 +122,12 @@ gifify() {
 }
 
 chr() {
-  printf \\$(printf '%03o' $1)
-  echo
+  [ "$1" -lt 256 ] || return 1
+  printf "\\$(printf '%03o' "$1")\n"
 }
 
 ord() {
-  printf '%d' "'$1"
-  echo
+  LC_CTYPE=C printf '%d\n' "'$1"
 }
 
 hf() {
@@ -173,7 +168,7 @@ up()
     else
         dir=${PWD%/$1/*}/$1
     fi
-    cd "$dir";
+    cd "$dir" || exit
 }
 
 # From this original
@@ -203,3 +198,5 @@ npmscan()
         find "$dir" -maxdepth 6 -type d -name node_modules -print0 | xargs -0 -L1 sh -c 'cd "$0/.." && pwd && npm ls 2>/dev/null | grep -E "babelcli|crossenv|cross-env.js|d3.js|fabric-js|ffmepg|gruntcli|http-proxy.js|jquery.js|mariadb|mongose|mssql.js|mssql-node|mysqljs|nodecaffe|nodefabric|node-fabric|nodeffmpeg|nodemailer-js|nodemailer.js|nodemssql|node-opencv|node-opensl|node-openssl|noderequest|nodesass|nodesqlite|node-sqlite|node-tkinter|opencv.js|openssl.js|proxy.js|shadowsock|smb|sqlite.js|sqliter|sqlserver|tkinter"'
     done
 }
+
+shdl() { curl -O "$(curl -s https://sci-hub.scihubtw.tw/"$@" | grep location.href | grep -o 'http.*pdf')" ;}
