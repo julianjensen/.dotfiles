@@ -206,5 +206,12 @@
 [url "git@git.taservs.net:"]
 	insteadOf = https://git.taservs.net
 [user]
-	email = jjdanois@gmail.com
+	email = jjensen@licorice.io
 	name = Julian Jensen
+	signingKey = ""
+[gpg]
+	program = gpg
+[commit]
+	gpgSign = false
+[tag]
+	forceSignAnnotated = false

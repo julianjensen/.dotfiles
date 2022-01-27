@@ -1,1 +1,2 @@
 npm i -g node-gyp babel babelify bower browserify complexity-report express grunt grunt-cli gulp gulp-cli livereload nodemon gulp-livereload gulp-nodemon gulp-sass http-server jshint less lodash mongojs plato swagger-tools traceur ws websocket.io wiredep yo yslow
+npm i -g tldr

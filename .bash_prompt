@@ -186,7 +186,7 @@ function updatePrompt()
 
     # Is this inside a git repo. This is super fast.
     if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == "true" ]]; then
-        PPREFIX="${Yellow}\w${ResetColor} "
+        PPREFIX="${White}\u|${BoldBlue}\h${White}| ${Yellow}\w${ResetColor} "
 
         # Ensure the index is up to date. Medium speed. Removed to speed things up just a bit.
 #        git update-index --really-refresh -q &> /dev/null
@@ -255,7 +255,8 @@ function updatePrompt()
         NODE="(${BoldBlue}${MODULE_NAME}${ResetColor}@${Blue}${MODULE_VERSION}${ResetColor}) "
     fi
 
-    PS1="${PPREFIX}${NODE}${NEW_PROMPT-}\n ${White}$(printf '%(%H:%M)T')${ResetColor}${tail}"
+#    PS1="${PPREFIX}${NODE}${NEW_PROMPT-}\n ${White}$(printf '%(%H:%M)T')${ResetColor}${tail}"
+    PS1="${White}╭─┤${PPREFIX}${NODE}${NEW_PROMPT-}\n${White}╰── $(printf '%(%H:%M)T')${ResetColor}${tail}"
 
 }
 

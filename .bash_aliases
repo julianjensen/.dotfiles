@@ -1,10 +1,13 @@
 # shellcheck shell=bash
 
+alias initaws='. /usr/local/bin/init-aws'
 alias start='pushd "$PROJECT_ROOT" > /dev/null && yarn run start-all && popd > /dev/null'
 alias stop='pushd "$PROJECT_ROOT" > /dev/null && yarn run stop-all && popd > /dev/null'
-alias test='pushd "$PROJECT_ROOT" > /dev/null && yarn test:backend && popd > /dev/null'
+#alias test='pushd "$PROJECT_ROOT" > /dev/null && yarn test:backend && popd > /dev/null'
 
-alias fd=fdfind
+alias boxart="graph-easy --as=boxart"
+alias files="fzf --preview 'bat --style=numbers --color=always --line-range :500 {}'"
+alias fd='fdfind -E **/node_modules/*'
 alias initsys='ps --no-headers -o comm 1'
 alias sloc="sloc -e '.*node_modules.*'"
 alias fixc='sudo umount /mnt/c && sudo mount -t drvfs C:\\ /mnt/c'
@@ -50,7 +53,8 @@ alias firewall=iptlist
 #alias xclip='xclip -selection c'
 alias ack='ack -k --ignore-dir=node_modules --ignore-dir=__tests__'
 alias ag='ag --ignore=node_modules --ignore=__tests__'
-#alias rg="rg -g '!**/node_modules/**/*' -g '!**/test/**/*' -g '!*[-_]test\.*' -g '!**/__tests__/**/*'"
+alias rg="rg --colors 'path:fg:cyan' -g '!**/node_modules/**/*' -g '!**/test/**/*' -g '!*[-_]test\.*' -g '!**/__tests__/**/*' -g '!**/*.map' -g '!**/*.min.*'"
+#alias rg="rg --colors 'path:fg:cyan'"
 alias rgt="rg -g '!**/node_modules/**/*'"
 
 alias inst='sudo apt-get install'
@@ -58,7 +62,7 @@ alias update='sudo apt-get update'
 alias upgrade='sudo apt-get update && sudo apt-get upgrade && sudo apt autoremove'
 alias search='apt-cache search'
 
-if hash nmcli 2>/dev/null; then
+if hash nmcli 2>/dev/null && nmcli >/dev/null 2>&1; then
     NIC=$(nmcli -t -f DEVICE c s -a)
     export NIC
 	alias dnstop='sudo dnstop -l 5 '${NIC}
@@ -128,9 +132,11 @@ if ls --color > /dev/null 2>&1; then colorflag="--color"; else colorflag="-G"; f
 export CLICOLOR_FORCE=1
 
 # ls options: A = include hidden (but not . or ..), F = put `/` after folders, h = byte unit suffixes, N = no quotes
-alias la='ls -lAFhN ${colorflag} --group-directories-first'
-alias ll='ls -lFhN ${colorflag} --group-directories-first'
-alias lsd='ls -l | grep "^d"' # only directories
+alias la='exa --git -laF --group-directories-first'
+alias ll='exa --git -lF --group-directories-first'
+#alias la='exa ---git --icons lAFhN ${colorflag} --group-directories-first'
+#alias ll='exa --git --icons -lFhN ${colorflag} --group-directories-first'
+# alias lsd='ls -l | grep "^d"' # only directories
 alias gls='git br -l'
 ###
 
