@@ -1,0 +1,8 @@
+--colors=path:fg:cyan
+--no-ignore-dot
+--glob=!**/node_modules/**/*
+--glob=!**/test/**/*
+--glob=!*[-_]test\.*
+--glob=!**/__tests__/**/*
+--glob=!**/*.map
+--glob=!**/*.min.*

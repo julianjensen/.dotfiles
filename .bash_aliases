@@ -1,4 +1,7 @@
 # shellcheck shell=bash
+alias cat=batcat
+alias dbtunnel='ssh -N -L 9005:pp15w7mowz2os12.cjnyqaknqbvs.us-east-1.rds.amazonaws.com:5432 ubuntu@bastion.licorice.dev'
+alias rdbtunnel='ssh -N -L 9006:pp13wwysg8s0dvf.cjnyqaknqbvs.us-east-1.rds.amazonaws.com:5432 ubuntu@bastion.licorice.ai'
 
 alias initaws='. /usr/local/bin/init-aws'
 alias start='pushd "$PROJECT_ROOT" > /dev/null && yarn run start-all && popd > /dev/null'
@@ -53,9 +56,12 @@ alias firewall=iptlist
 #alias xclip='xclip -selection c'
 alias ack='ack -k --ignore-dir=node_modules --ignore-dir=__tests__'
 alias ag='ag --ignore=node_modules --ignore=__tests__'
-alias rg="rg --colors 'path:fg:cyan' -g '!**/node_modules/**/*' -g '!**/test/**/*' -g '!*[-_]test\.*' -g '!**/__tests__/**/*' -g '!**/*.map' -g '!**/*.min.*'"
+
+alias rg="RIPGREP_CONFIG_PATH="'$HOME'"/.dotfiles/.ripgreprc \rg"
+#alias rg="rg --colors 'path:fg:cyan' -g '!**/node_modules/**/*' -g '!**/test/**/*' -g '!*[-_]test\.*' -g '!**/__tests__/**/*' -g '!**/*.map' -g '!**/*.min.*'"
 #alias rg="rg --colors 'path:fg:cyan'"
-alias rgt="rg -g '!**/node_modules/**/*'"
+alias rgt="/usr/bin/rg --no-config --colors 'path:fg:cyan' -g '!**/node_modules/**/*'"
+alias rgall="/usr/bin/rg --no-config --no-ignore --colors 'path:fg:cyan'"
 
 alias inst='sudo apt-get install'
 alias update='sudo apt-get update'
@@ -141,7 +147,7 @@ alias gls='git br -l'
 ###
 
 # `cat` with beautiful colors. requires: sudo easy_install -U Pygments
-alias c='pygmentize -O style=monokai -f console256 -g'
+#alias c='pygmentize -O style=monokai -f console256 -g'
 
 ###
 # GIT STUFF

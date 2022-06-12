@@ -254,3 +254,19 @@ npmscan()
 }
 
 shdl() { curl -O "$(curl -s https://sci-hub.scihubtw.tw/"$@" | grep location.href | grep -o 'http.*pdf')" ;}
+
+remote()
+{
+    ssh -t -J bastion ubuntu@"$1" "sudo su - server"
+}
+
+relremote()
+{
+    ssh -t -J rbastion ubuntu@"$1" "sudo su - server"
+}
+
+
+prdremote()
+{
+    ssh -t -J pbastion ubuntu@"$1" "sudo su - server"
+}

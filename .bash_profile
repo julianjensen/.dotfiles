@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 stty -ixon # Disable ctrl-s and ctrl-q
+#export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 
 quiet=1
 
@@ -17,7 +18,7 @@ logline() {
 ## PATHS
 ##
 
-PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:/usr/lib/llvm-latest/bin:$HOME/.rvm/bin:$HOME/.rvm/gems/ruby-2.4.0@global/bin:$HOME/.rvm/rubies/ruby-2.4.0/bin:$HOME/bin:/usr/lib/jvm/java-9-oracle/bin:/usr/lib/jvm/java-9-oracle/db/bin:$HOME/code/wabt/bin:$JAVA_HOME/bin:/usr/local/go/bin:$HOME/.rvm/bin:$HOME/.yarn/bin:/mnt/c/Windows/System32:/mnt/c/Windows/System32/WindowsPowerShell/v1.0:$HOME/WebStorm/bin:$PATH"
+PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:/usr/lib/llvm-latest/bin:$HOME/.rvm/bin:$HOME/.rvm/gems/ruby-2.4.0@global/bin:$HOME/.rvm/rubies/ruby-2.4.0/bin:$HOME/bin:/usr/lib/jvm/java-9-oracle/bin:/usr/lib/jvm/java-9-oracle/db/bin:$HOME/code/wabt/bin:$JAVA_HOME/bin:/usr/local/go/bin:$HOME/.rvm/bin:$HOME/.yarn/bin:/mnt/c/Windows/System32:/mnt/c/Windows/System32/WindowsPowerShell/v1.0:$HOME/WebStorm/bin:$HOME/.local/bin"
 export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
 export NODE_PATH=/usr/lib/node_modules:/usr/local/lib/node_modules
 
@@ -39,6 +40,8 @@ export PM=yarn
 
 log "reading bash scripts in the home directory..."
 
+eval "$(node --completion-bash)"
+
 # Load our dotfiles like ~/.bash_prompt, etc…
 #   ~/.extra can be used for settings you don’t want to commit,
 #   Use it to configure your PATH, thus it being first in line.
@@ -47,10 +50,24 @@ for bashscript in ~/.{bash_prompt,extra,exports,bash_aliases,functions}; do
 done
 unset bashscript
 
+# Mostly bash completion scripts in there
+for bscript in ~/.bash.d/*.sh; do source "$bscript"; done
+
+# Things that shouldn't be published go in here
+if [[ -d ~/.bash-secrets.d ]]; then
+    for bscript in ~/.bash-secrets.d/*.sh; do
+        STUFF=$($bscript)
+        eval "$STUFF"
+    done
+fi
+unset bscript
+
 #logline "starting ssh-agent"
 
-#eval "$(ssh-agent -s)" >/dev/null
-#ssh-add -q /home/julian/.ssh/id_rsa >/dev/null
+eval "$(ssh-agent -s)" >/dev/null
+ssh-add -q /home/julian/.ssh/id_rsa >/dev/null
+
+#echo "AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" AWS_REGION="$AWS_REGION" aws ec2 describe-instances --region=us-east-1 | node /home/julian/code/licorice/bin/init-aws.js"
 
 log "colorizing all the things..."
 
@@ -98,10 +115,12 @@ shopt -s histappend                             # append to history, don't overw
 shopt -s autocd
 
 GOPATH="$HOME/go"
-DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0
-
-export DISPLAY
 export GOPATH
+
+DISPLAY=$(ip route | awk '{print $3; exit}'):0
+export DISPLAY
+export LIBGL_ALWAYS_INDIRECT=1
+export XCURSOR_SIZE=16
 
 logline "okay"
 log "setting up z..."
@@ -137,7 +156,7 @@ logline "okay"
 log "bash completion and other bash scripts from ~/.bash.d ..."
 
 # Mostly bash completion scripts in there
-for bscript in ~/.bash.d/*.sh; do source "$bscript"; done
+#for bscript in ~/.bash.d/*.sh; do source "$bscript"; done
 
 if [[ -d "$HOME/.cargo" ]]; then
     . "$HOME/.cargo/env"
